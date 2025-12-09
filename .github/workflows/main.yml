@@ -21,5 +21,3 @@ jobs:
 
                 cd ${{ secrets.DEPLOY_DIR }}
                 git pull origin main
-
-                sh setup.sh
