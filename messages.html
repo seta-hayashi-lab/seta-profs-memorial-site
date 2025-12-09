@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="瀬田和久先生 追悼メッセージ - 大阪公立大学 大学院情報学研究科 教授">
+    <meta name="robots" content="noindex, nofollow">
+    <title>追悼メッセージ | 瀬田和久先生 追悼サイト</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー（テンプレートから生成） -->
+    <div id="header-template" data-compact="true"></div>
+
+    <!-- ナビゲーション（テンプレートから生成） -->
+    <div id="nav-template" data-active="messages"></div>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <section class="messages-section">
+            <div class="container">
+                <h1 class="page-title">追悼メッセージ</h1>
+
+                <p class="messages-intro">
+                    瀬田先生にゆかりのある皆様からの追悼メッセージをご紹介いたします．<br>
+                    先生との思い出，感謝の気持ちなど，皆様からのメッセージをお待ちしております．
+                </p>
+
+                <!-- メッセージ一覧 -->
+                <div class="messages-container" id="messagesContainer">
+                    <article class="message-card">
+                        <div class="message-content">
+                            <p>
+                                瀬田先生への追悼メッセージをお寄せください．
+                                先生との思い出，ご研究へのご指導，お人柄についてなど，
+                                皆様の心に残る瀬田先生のお姿をお聞かせいただければ幸いです．
+                            </p>
+                        </div>
+                        <div class="message-author">
+                            <span class="author-name">追悼サイト管理者</span>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- メッセージ投稿フォーム -->
+                <div class="message-form-section">
+                    <h3>追悼メッセージを投稿する</h3>
+                    <p class="form-description">
+                        瀬田先生への追悼の言葉をお寄せください．<br>
+                        投稿いただいたメッセージは，管理者の確認後に掲載されます．
+                    </p>
+
+                    <form id="messageForm" class="message-form">
+                        <div class="form-group">
+                            <label for="authorName">お名前 <span class="required">*</span></label>
+                            <input type="text" id="authorName" name="authorName" required
+                                   placeholder="例：山田 太郎">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="authorAffiliation">ご所属・ご関係</label>
+                            <input type="text" id="authorAffiliation" name="authorAffiliation"
+                                   placeholder="例：○○大学 / 元研究室メンバー / 共同研究者">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="relationship">瀬田先生とのご関係 <span class="required">*</span></label>
+                            <select id="relationship" name="relationship" required>
+                                <option value="">選択してください</option>
+                                <option value="student">教え子（学生・院生）</option>
+                                <option value="alumni">研究室OB/OG</option>
+                                <option value="colleague">ご同僚・共同研究者</option>
+                                <option value="academic">学会関係者</option>
+                                <option value="other">その他</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="messageContent">メッセージ <span class="required">*</span></label>
+                            <textarea id="messageContent" name="messageContent" rows="8" required
+                                      placeholder="瀬田先生との思い出，感謝の気持ちなどをお書きください．"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactEmail">連絡先メールアドレス（非公開）</label>
+                            <input type="email" id="contactEmail" name="contactEmail"
+                                   placeholder="確認のためのご連絡先（任意）">
+                        </div>
+
+                        <div class="form-note">
+                            <p>※ <span class="required">*</span> は必須項目です</p>
+                            <p>※ 投稿いただいたメッセージは管理者の確認後に掲載されます</p>
+                            <p>※ メールアドレスは確認のためにのみ使用し，公開されません</p>
+                            <p>※ 故人への敬意を込めた内容でお願いいたします</p>
+                        </div>
+
+                        <button type="submit" class="submit-btn">メッセージを送信</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- フッター（テンプレートから生成） -->
+    <div id="footer-template"></div>
+
+    <script src="js/templates.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

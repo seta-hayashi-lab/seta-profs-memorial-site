@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="瀬田和久先生 お写真 - 大阪公立大学 大学院情報学研究科 教授">
+    <meta name="robots" content="noindex, nofollow">
+    <title>お写真 | 瀬田和久先生 追悼サイト</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー（テンプレートから生成） -->
+    <div id="header-template" data-compact="true"></div>
+
+    <!-- ナビゲーション（テンプレートから生成） -->
+    <div id="nav-template" data-active="gallery"></div>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <section class="gallery-section">
+            <div class="container">
+                <h1 class="page-title">お写真</h1>
+
+                <p class="gallery-intro">
+                    瀬田先生との思い出のお写真・動画をご覧いただけます．
+                </p>
+
+                <div class="gallery-tabs">
+                    <button class="tab-btn active" data-tab="photos">お写真</button>
+                    <button class="tab-btn" data-tab="videos">動画</button>
+                </div>
+
+                <!-- 写真ギャラリー -->
+                <div id="photos" class="tab-content active">
+                    <div class="gallery-grid" id="photoGallery">
+                        <div class="gallery-item placeholder" data-add="photo">
+                            <span class="add-icon">+</span>
+                            <span class="add-text">お写真を追加</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 動画ギャラリー -->
+                <div id="videos" class="tab-content">
+                    <div class="video-grid" id="videoGallery">
+                        <div class="video-item placeholder" data-add="video">
+                            <span class="add-icon">+</span>
+                            <span class="add-text">動画を追加</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="gallery-note">
+                    お写真・動画の掲載をご希望の方は，管理者までご連絡ください．<br>
+                    故人のプライバシーに配慮し，適切なお写真・動画のみ掲載いたします．
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ライトボックス -->
+    <div id="lightbox" class="lightbox">
+        <button class="lightbox-close" aria-label="閉じる">&times;</button>
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="">
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+        <button class="lightbox-prev" aria-label="前へ">&#10094;</button>
+        <button class="lightbox-next" aria-label="次へ">&#10095;</button>
+    </div>
+
+    <!-- フッター（テンプレートから生成） -->
+    <div id="footer-template"></div>
+
+    <script src="js/templates.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
