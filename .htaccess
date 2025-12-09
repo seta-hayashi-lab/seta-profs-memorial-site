@@ -1,3 +1,3 @@
 # order deny,allow
-deny from all
+# deny from all
 # allow from 163.226.192.16
