@@ -3,6 +3,7 @@
 ## 概要
 
 このリポジトリは，故 瀬田和久先生の追悼サイトのソースコードです．
+研究室Webサイトの中でCSSなどを独立に設定するために独立のシステムを使っています．
 
 ## デプロイについて
 
@@ -15,8 +16,8 @@ GitHub Actionsによって，pushを検知するとSSH経由でサーバーに�
 ### 1. リポジトリをクローン（初回のみ）
 
 ```bash
-git clone https://github.com/seta-hayashi-lab/リポジトリ名.git
-cd リポジトリ名
+git clone https://github.com/seta-hayashi-lab/seta-profs-memorial-site.git
+cd seta-profs-memorial-site
 ```
 
 ### 2. ファイルを編集
@@ -40,12 +41,12 @@ git push origin main
 
 | コマンド | 説明 |
 |---------|------|
-| `git status` | 変更されたファイルを確認 |
-| `git add .` | すべての変更をステージング |
-| `git add ファイル名` | 特定のファイルのみステージング |
-| `git commit -m "メッセージ"` | 変更をコミット |
-| `git push origin main` | リモートにpush（デプロイ実行） |
-| `git pull origin main` | 最新の変更を取得 |
+| git status | 変更されたファイルを確認 |
+| git add | すべての変更をステージング |
+| git add ファイル名 | 特定のファイルのみステージング |
+| git commit -m "メッセージ" | 変更をコミット |
+| git push origin main | リモートにpush（デプロイ実行） |
+| git pull origin main | 最新の変更を取得 |
 
 ## 注意事項
 
