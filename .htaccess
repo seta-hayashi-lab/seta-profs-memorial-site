@@ -1,3 +1,51 @@
+# =====================================================
+# セキュリティ設定
+# =====================================================
+
+# .htpasswd への直接アクセスを拒否
+<Files ".htpasswd">
+    Require all denied
+</Files>
+
+# .env への直接アクセスを拒否
+<Files ".env">
+    Require all denied
+</Files>
+
+# config.php への直接アクセスを拒否
+<Files "config.php">
+    Require all denied
+</Files>
+
+# auth-check.php への直接アクセスを拒否
+<Files "auth-check.php">
+    Require all denied
+</Files>
+
+# gallery.json への直接アクセスを拒否
+<Files "gallery.json">
+    Require all denied
+</Files>
+
+# =====================================================
+# HTMLファイルからPHPへのリダイレクト
+# =====================================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # gallery.html へのアクセスを gallery.php へリダイレクト
+    RewriteRule ^gallery\.html$ gallery.php [R=301,L]
+
+    # messages.html へのアクセスを messages.php へリダイレクト
+    RewriteRule ^messages\.html$ messages.php [R=301,L]
+
+    # contributions.html へのアクセスを research.html へリダイレクト
+    RewriteRule ^contributions\.html$ research.html [R=301,L]
+</IfModule>
+
+# =====================================================
+# IP制限（必要に応じてコメントを解除）
+# =====================================================
 # order deny,allow
 # deny from all
 # allow from 163.226.192.16

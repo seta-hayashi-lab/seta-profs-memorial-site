@@ -35,7 +35,7 @@
                     <h3>追悼メッセージ・お写真を投稿する</h3>
                     <p class="form-description">
                         瀬田先生への追悼の言葉，思い出のお写真・動画をお寄せください．<br>
-                        投稿いただいた内容は，管理者の確認後に<a href="gallery.html">追悼メッセージ一覧</a>に掲載されます．
+                        投稿いただいた内容は，管理者の確認後に<a href="gallery.php">追悼メッセージ一覧</a>に掲載されます．
                     </p>
 
                     <form id="messageForm" class="message-form">
@@ -400,6 +400,7 @@
                 submitBtn.disabled = false;
             });
         });
+
     })();
     </script>
 </body>

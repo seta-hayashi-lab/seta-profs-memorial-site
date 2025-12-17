@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="瀬田和久先生 追悼サイト - パスワード申請・お問い合わせ">
+    <meta name="robots" content="noindex, nofollow">
+    <title>パスワード申請・お問い合わせ | 瀬田和久先生 追悼サイト</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー（テンプレートから生成） -->
+    <div id="header-template" data-compact="true"></div>
+
+    <!-- ナビゲーション（テンプレートから生成） -->
+    <div id="nav-template" data-active="inquiry"></div>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <section class="inquiry-section">
+            <div class="container">
+                <h1 class="page-title">パスワード申請・お問い合わせ</h1>
+
+                <div class="inquiry-intro">
+                    <p>
+                        追悼メッセージ一覧ページの閲覧には，パスワードが必要です．<br>
+                        瀬田先生と関わりのあった方は，以下のフォームよりお申し込みください．
+                    </p>
+                </div>
+
+                <div class="inquiry-form-section">
+                    <form id="inquiryForm" class="inquiry-form">
+                        <div class="form-group">
+                            <label for="inquiryType">お問い合わせ種別 <span class="required">*</span></label>
+                            <select id="inquiryType" name="inquiryType" required>
+                                <option value="">選択してください</option>
+                                <option value="password_request">パスワード申請</option>
+                                <option value="other">その他のお問い合わせ</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inquiryName">お名前 <span class="required">*</span></label>
+                            <input type="text" id="inquiryName" name="name" required placeholder="例：山田 太郎">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inquiryEmail">メールアドレス <span class="required">*</span></label>
+                            <input type="email" id="inquiryEmail" name="email" required placeholder="例：example@example.com">
+                            <span class="form-hint">パスワードの送付先となります</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inquiryAffiliation">ご所属</label>
+                            <input type="text" id="inquiryAffiliation" name="affiliation" placeholder="例：○○大学 / 株式会社○○">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inquiryRelationship">瀬田先生とのご関係 <span class="required">*</span></label>
+                            <select id="inquiryRelationship" name="relationship" required>
+                                <option value="">選択してください</option>
+                                <option value="student">教え子・学生</option>
+                                <option value="colleague">同僚・共同研究者</option>
+                                <option value="academic">学会関係者</option>
+                                <option value="friend">友人・知人</option>
+                                <option value="family">ご親族</option>
+                                <option value="other">その他</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="relationshipDetailGroup" style="display: none;">
+                            <label for="inquiryRelationshipDetail">ご関係の詳細</label>
+                            <input type="text" id="inquiryRelationshipDetail" name="relationshipDetail" placeholder="例：2015年度卒業生 / ○○学会で同じ委員会">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inquiryMessage">メッセージ・備考</label>
+                            <textarea id="inquiryMessage" name="message" rows="5" placeholder="パスワード申請の場合は，瀬田先生とのご関係について簡単にお知らせください"></textarea>
+                        </div>
+
+                        <div class="form-note">
+                            <p>・いただいた情報は本サイトの運営目的以外には使用いたしません．</p>
+                            <p>・パスワードは確認後，メールにてお送りいたします．</p>
+                            <p>・お問い合わせ内容によっては，回答までにお時間をいただく場合がございます．</p>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submitBtn">送信する</button>
+                    </form>
+                </div>
+
+                <div class="inquiry-back-link">
+                    <a href="login.php">ログインページに戻る</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ローディングオーバーレイ -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">送信中...</p>
+        </div>
+    </div>
+
+    <!-- 送信完了モーダル -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">&#10003;</div>
+            <h3 class="modal-title">送信完了</h3>
+            <p class="modal-message">お問い合わせを受け付けました．</p>
+            <p class="modal-submessage">
+                パスワード申請の場合は，確認後メールにてご連絡いたします．<br>
+                しばらくお待ちください．
+            </p>
+            <button type="button" class="modal-btn" id="closeSuccessModal">閉じる</button>
+        </div>
+    </div>
+
+    <!-- フッター（テンプレートから生成） -->
+    <div id="footer-template"></div>
+
+    <script src="js/templates.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        var form = document.getElementById('inquiryForm');
+        var loadingOverlay = document.getElementById('loadingOverlay');
+        var successModal = document.getElementById('successModal');
+        var relationshipSelect = document.getElementById('inquiryRelationship');
+        var relationshipDetailGroup = document.getElementById('relationshipDetailGroup');
+        var isSubmitting = false;
+
+        // 関係性の選択に応じて詳細入力欄を表示
+        relationshipSelect.addEventListener('change', function() {
+            if (this.value && this.value !== '') {
+                relationshipDetailGroup.style.display = 'block';
+            } else {
+                relationshipDetailGroup.style.display = 'none';
+            }
+        });
+
+        // ページ離脱防止
+        window.addEventListener('beforeunload', function(e) {
+            if (isSubmitting) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        });
+
+        // フォーム送信
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (isSubmitting) return;
+
+            isSubmitting = true;
+            loadingOverlay.classList.add('active');
+
+            var formData = {
+                type: document.getElementById('inquiryType').value,
+                name: document.getElementById('inquiryName').value,
+                email: document.getElementById('inquiryEmail').value,
+                affiliation: document.getElementById('inquiryAffiliation').value,
+                relationship: document.getElementById('inquiryRelationship').value,
+                relationshipDetail: document.getElementById('inquiryRelationshipDetail').value,
+                message: document.getElementById('inquiryMessage').value
+            };
+
+            fetch('api/inquiry.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                isSubmitting = false;
+                loadingOverlay.classList.remove('active');
+
+                if (data.success) {
+                    form.reset();
+                    relationshipDetailGroup.style.display = 'none';
+                    successModal.classList.add('active');
+                } else {
+                    alert('エラー: ' + (data.error || '送信に失敗しました'));
+                }
+            })
+            .catch(function(error) {
+                isSubmitting = false;
+                loadingOverlay.classList.remove('active');
+                console.error('送信エラー:', error);
+                alert('送信に失敗しました．時間をおいて再度お試しください．');
+            });
+        });
+
+        // モーダルを閉じる
+        document.getElementById('closeSuccessModal').addEventListener('click', function() {
+            successModal.classList.remove('active');
+        });
+
+        successModal.addEventListener('click', function(e) {
+            if (e.target === successModal) {
+                successModal.classList.remove('active');
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

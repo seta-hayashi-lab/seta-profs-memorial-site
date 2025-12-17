@@ -101,26 +101,10 @@
         // 保存済みの写真を読み込み
         if (elements.photoGallery) {
             loadSavedPhotos();
-
-            // 写真追加プレースホルダーのクリックイベント
-            var photoPlaceholder = elements.photoGallery.querySelector('[data-add="photo"]');
-            if (photoPlaceholder) {
-                photoPlaceholder.addEventListener('click', function() {
-                    showAddPhotoDialog();
-                });
-            }
         }
 
         if (elements.videoGallery) {
             loadSavedVideos();
-
-            // 動画追加プレースホルダーのクリックイベント
-            var videoPlaceholder = elements.videoGallery.querySelector('[data-add="video"]');
-            if (videoPlaceholder) {
-                videoPlaceholder.addEventListener('click', function() {
-                    showAddVideoDialog();
-                });
-            }
         }
 
         // ライトボックスの制御
@@ -145,8 +129,7 @@
     }
 
     function addPhotoToGallery(photo, index) {
-        var placeholder = elements.photoGallery.querySelector('[data-add="photo"]');
-        if (!placeholder) return;
+        if (!elements.photoGallery) return;
 
         var item = document.createElement('div');
         item.className = 'gallery-item';
@@ -164,12 +147,11 @@
             openLightbox(parseInt(this.getAttribute('data-index')));
         });
 
-        elements.photoGallery.insertBefore(item, placeholder);
+        elements.photoGallery.appendChild(item);
     }
 
     function addVideoToGallery(video) {
-        var placeholder = elements.videoGallery.querySelector('[data-add="video"]');
-        if (!placeholder) return;
+        if (!elements.videoGallery) return;
 
         var item = document.createElement('div');
         item.className = 'video-item';
@@ -190,7 +172,7 @@
             item.appendChild(iframe);
         }
 
-        elements.videoGallery.insertBefore(item, placeholder);
+        elements.videoGallery.appendChild(item);
     }
 
     function updateGalleryImages() {

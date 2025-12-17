@@ -1,0 +1,4 @@
+# ギャラリーファイルはGitHubにコミット（GIT_AUTO_PUSH=true の場合）
+# ディレクトリ構造を保持するための .gitkeep
+!gallery/photos/.gitkeep
+!gallery/videos/.gitkeep

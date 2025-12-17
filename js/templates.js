@@ -30,16 +30,16 @@
         navigation: function(activePage) {
             var navItems = [
                 { href: 'index.html', label: '追悼の辞', id: 'index' },
-                { href: 'profile.html', label: 'ご略歴', id: 'profile' },
-                { href: 'research.html', label: 'ご研究業績', id: 'research' },
-                { href: 'contributions.html', label: 'ご貢献', id: 'contributions' },
-                { href: 'gallery.html', label: 'お写真', id: 'gallery' },
-                { href: 'messages.html', label: '追悼メッセージ', id: 'messages' }
+                { href: 'research.html', label: '学問へのご貢献', id: 'research' },
+                { href: 'gallery.php', label: '追悼メッセージ一覧', id: 'gallery', requiresLogin: true },
+                { href: 'messages.php', label: 'メッセージを送る', id: 'messages' },
+                { href: 'inquiry.html', label: 'お問い合わせ', id: 'inquiry' }
             ];
 
             var listItems = navItems.map(function(item) {
                 var activeClass = item.id === activePage ? ' active' : '';
-                return '<li><a href="' + item.href + '" class="nav-link' + activeClass + '">' + item.label + '</a></li>';
+                var loginBadge = item.requiresLogin ? '<span class="nav-login-badge">ログイン必須</span>' : '';
+                return '<li><a href="' + item.href + '" class="nav-link' + activeClass + '">' + item.label + loginBadge + '</a></li>';
             }).join('');
 
             return '<nav class="main-nav">' +
