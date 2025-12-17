@@ -43,7 +43,12 @@
             }).join('');
 
             return '<nav class="main-nav">' +
-                '<ul class="nav-list">' +
+                '<button class="hamburger-btn" id="hamburgerBtn" aria-label="メニューを開く" aria-expanded="false">' +
+                '<span class="hamburger-line"></span>' +
+                '<span class="hamburger-line"></span>' +
+                '<span class="hamburger-line"></span>' +
+                '</button>' +
+                '<ul class="nav-list" id="navList">' +
                 listItems +
                 '</ul>' +
                 '</nav>';

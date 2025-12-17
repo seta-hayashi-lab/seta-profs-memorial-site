@@ -517,6 +517,43 @@
     };
 
     // =====================================================
+    // ハンバーガーメニュー
+    // =====================================================
+    function initHamburgerMenu() {
+        var hamburgerBtn = document.getElementById('hamburgerBtn');
+        var navList = document.getElementById('navList');
+
+        if (!hamburgerBtn || !navList) return;
+
+        hamburgerBtn.addEventListener('click', function() {
+            var isOpen = navList.classList.toggle('open');
+            hamburgerBtn.classList.toggle('active');
+            hamburgerBtn.setAttribute('aria-expanded', isOpen);
+            hamburgerBtn.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
+        });
+
+        // メニュー項目クリックでメニューを閉じる
+        navList.querySelectorAll('.nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                navList.classList.remove('open');
+                hamburgerBtn.classList.remove('active');
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
+                hamburgerBtn.setAttribute('aria-label', 'メニューを開く');
+            });
+        });
+
+        // メニュー外クリックで閉じる
+        document.addEventListener('click', function(e) {
+            if (!hamburgerBtn.contains(e.target) && !navList.contains(e.target)) {
+                navList.classList.remove('open');
+                hamburgerBtn.classList.remove('active');
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
+                hamburgerBtn.setAttribute('aria-label', 'メニューを開く');
+            }
+        });
+    }
+
+    // =====================================================
     // 初期化
     // =====================================================
     function init() {
@@ -524,6 +561,7 @@
         getElements();
 
         // 各機能を初期化
+        initHamburgerMenu();
         initTabs();
         initGallery();
         initMessageForm();
