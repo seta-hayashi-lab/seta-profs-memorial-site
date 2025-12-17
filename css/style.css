@@ -82,7 +82,7 @@ html {
 
 body {
     font-family: var(--font-sans);
-    line-height: 2;
+    line-height: 1.8;
     color: var(--text-primary);
     background-color: var(--bg-darkest);
     -webkit-font-smoothing: antialiased;
@@ -381,7 +381,7 @@ ul {
 .intro-text p {
     margin-bottom: var(--spacing-md);
     text-align: justify;
-    line-height: 2.4;
+    line-height: 1.8;
     font-size: 0.95rem;
 }
 
@@ -415,7 +415,7 @@ ul {
     font-size: 1rem;
     color: var(--text-secondary);
     font-style: italic;
-    line-height: 2.2;
+    line-height: 1.8;
     margin: 0;
     padding-left: var(--spacing-md);
 }
@@ -573,7 +573,7 @@ ul {
     margin: 0 auto var(--spacing-xl);
     text-align: center;
     color: var(--text-secondary);
-    line-height: 2.2;
+    line-height: 1.8;
     font-size: 0.95rem;
 }
 
@@ -604,7 +604,7 @@ ul {
     font-family: var(--font-serif);
     font-size: 1rem;
     color: var(--text-secondary);
-    line-height: 2.2;
+    line-height: 1.8;
     margin: 0;
     padding-left: var(--spacing-md);
 }
@@ -638,7 +638,7 @@ ul {
     margin: 0 auto var(--spacing-xl);
     text-align: center;
     color: var(--text-secondary);
-    line-height: 2.2;
+    line-height: 1.8;
     font-size: 0.95rem;
 }
 
@@ -670,7 +670,7 @@ ul {
 
 .research-philosophy p {
     color: var(--text-secondary);
-    line-height: 2.2;
+    line-height: 1.8;
     font-size: 0.9rem;
 }
 
@@ -741,7 +741,7 @@ ul {
 .research-card p {
     font-size: 0.85rem;
     color: var(--text-secondary);
-    line-height: 2;
+    line-height: 1.8;
 }
 
 /* 業績リスト */
@@ -922,7 +922,7 @@ ul {
 
 .contribution-summary p {
     color: var(--text-secondary);
-    line-height: 2.2;
+    line-height: 1.8;
     font-size: 0.95rem;
 }
 
@@ -1627,6 +1627,66 @@ ul {
     color: var(--text-dim);
 }
 
+/* 写真ギャラリーセクション（メッセージなし画像・動画一覧） */
+.photo-gallery-section {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.photo-gallery-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 0.1em;
+}
+
+.photo-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.photo-gallery-item {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-normal);
+}
+
+.photo-gallery-item:hover {
+    border-color: var(--color-gold);
+}
+
+.photo-gallery-photo {
+    cursor: pointer;
+}
+
+.photo-gallery-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(30%);
+    transition: filter var(--transition-normal);
+}
+
+.photo-gallery-photo:hover img {
+    filter: grayscale(10%);
+}
+
+.photo-gallery-video {
+    aspect-ratio: 16 / 9;
+}
+
+.photo-gallery-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* =====================================================
    メッセージページ
    ===================================================== */
@@ -1639,7 +1699,7 @@ ul {
     text-align: center;
     margin-bottom: var(--spacing-xl);
     color: var(--text-secondary);
-    line-height: 2.2;
+    line-height: 1.8;
     font-size: 0.9rem;
 }
 
@@ -1677,7 +1737,7 @@ ul {
 }
 
 .message-content p {
-    line-height: 2.2;
+    line-height: 1.8;
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
@@ -2191,7 +2251,7 @@ ul {
 
 .gratitude-message p {
     color: var(--text-secondary);
-    line-height: 2.2;
+    line-height: 1.8;
     font-size: 0.9rem;
     margin-bottom: var(--spacing-sm);
 }
@@ -2244,7 +2304,7 @@ ul {
 .research-area p {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 2.2;
+    line-height: 1.8;
     margin-bottom: var(--spacing-md);
 }
 
@@ -2357,7 +2417,7 @@ ul {
 .contribution-intro p {
     color: var(--text-secondary);
     font-size: 0.95rem;
-    line-height: 2.2;
+    line-height: 1.8;
     text-align: center;
 }
 
@@ -2411,7 +2471,7 @@ ul {
 .contribution-content p {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 2.2;
+    line-height: 1.8;
 }
 
 .contribution-list {
@@ -2487,7 +2547,7 @@ ul {
 .paper-description {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 2.2;
+    line-height: 1.8;
     margin-bottom: var(--spacing-sm);
 }
 
@@ -2515,7 +2575,7 @@ ul {
 .research-legacy p {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 2.2;
+    line-height: 1.8;
     margin-bottom: var(--spacing-md);
 }
 
@@ -2526,7 +2586,7 @@ ul {
 .human-development > p {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 2.2;
+    line-height: 1.8;
     margin-bottom: var(--spacing-md);
 }
 
@@ -2546,7 +2606,7 @@ ul {
     padding-left: var(--spacing-sm);
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 2;
+    line-height: 1.8;
     margin-bottom: var(--spacing-xs);
 }
 
@@ -2560,7 +2620,7 @@ ul {
 .development-details p {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 2.2;
+    line-height: 1.8;
 }
 
 .gratitude-section .gratitude-message {
@@ -3288,7 +3348,7 @@ ul {
     text-align: center;
     margin-bottom: var(--spacing-xl);
     color: var(--text-secondary);
-    line-height: 2.2;
+    line-height: 1.8;
     font-size: 0.95rem;
 }
 

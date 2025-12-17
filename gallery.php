@@ -58,6 +58,43 @@ $userType = getUserType();
                     </p>
                 </div>
 
+                <!-- 写真ギャラリー -->
+                <?php
+                $photosDir = __DIR__ . '/images/photos/';
+                $photoFiles = [];
+                if (is_dir($photosDir)) {
+                    $files = scandir($photosDir);
+                    foreach ($files as $file) {
+                        if ($file === '.' || $file === '..' || $file === '.gitkeep') continue;
+                        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                        if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'mov'])) {
+                            $photoFiles[] = $file;
+                        }
+                    }
+                }
+                if (!empty($photoFiles)):
+                ?>
+                <div class="photo-gallery-section">
+                    <h2 class="photo-gallery-title">お写真・動画</h2>
+                    <div class="photo-gallery-grid">
+                        <?php foreach ($photoFiles as $file):
+                            $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                            $isVideo = in_array($ext, ['mp4', 'webm', 'mov']);
+                        ?>
+                        <?php if ($isVideo): ?>
+                        <div class="photo-gallery-item photo-gallery-video">
+                            <video src="images/photos/<?php echo htmlspecialchars($file); ?>" controls preload="metadata"></video>
+                        </div>
+                        <?php else: ?>
+                        <div class="photo-gallery-item photo-gallery-photo" data-src="images/photos/<?php echo htmlspecialchars($file); ?>">
+                            <img src="images/photos/<?php echo htmlspecialchars($file); ?>" alt="写真" loading="lazy">
+                        </div>
+                        <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <p class="gallery-note">
                     故人のプライバシーに配慮し，適切なメッセージ・お写真・動画のみ掲載いたします．
                 </p>
@@ -356,6 +393,14 @@ $userType = getUserType();
 
         // ギャラリーデータを読み込み
         loadGalleryData();
+
+        // 写真ギャラリーのクリックイベント
+        document.querySelectorAll('.photo-gallery-photo').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var src = item.dataset.src || item.querySelector('img').src;
+                openLightbox(src);
+            });
+        });
 
         // 「すべてのメッセージの全文を開く」ボタン
         var expandAllBtn = document.getElementById('expandAllBtn');
