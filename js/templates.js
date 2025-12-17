@@ -10,18 +10,18 @@
     // 共通テンプレート（ヘッダー・ナビゲーション・フッター）
     // =====================================================
     var templates = {
-        // ヘッダーを生成（compact: trueでサブページ用コンパクトヘッダー）
+        // ヘッダーを生成
         header: function(options) {
-            options = options || {};
-            var compact = options.compact || false;
-            var compactClass = compact ? ' compact' : '';
-            var datesHtml = compact ? '' : '<p class="dates">1963 - 2025</p>';
-
-            return '<header class="site-header' + compactClass + '">' +
+            return '<header class="site-header">' +
                 '<div class="header-content">' +
+                '<div class="header-portrait">' +
+                '<img src="images/person/seta.png" alt="瀬田和久先生">' +
+                '</div>' +
+                '<div class="header-text">' +
                 '<p class="site-subtitle">追悼</p>' +
                 '<h1 class="site-title">瀬田 和久 先生</h1>' +
-                datesHtml +
+                '<p class="dates">1970 - 2025</p>' +
+                '</div>' +
                 '</div>' +
                 '</header>';
         },
@@ -54,16 +54,11 @@
             return '<footer class="site-footer">' +
                 '<div class="container">' +
                 '<div class="footer-content">' +
-                '<div class="footer-info">' +
-                '<h3>瀬田和久先生 追悼サイト</h3>' +
-                '<p>大阪公立大学 大学院情報学研究科</p>' +
-                '<p>瀬田・林・油谷研究室</p>' +
-                '</div>' +
                 '<div class="footer-links">' +
-                '<h4>関連リンク</h4>' +
+                '<h4>外部リンク</h4>' +
                 '<ul>' +
-                '<li><a href="https://www.omu.ac.jp/i/" target="_blank" rel="noopener">大阪公立大学 情報学研究科</a></li>' +
                 '<li><a href="https://kshci-lab.net/" target="_blank" rel="noopener">瀬田・林・油谷研究室</a></li>' +
+                '<li><a href="https://nrid.nii.ac.jp/ja/nrid/1000050304051/" target="_blank" rel="noopener">KAKEN</a></li>' +
                 '<li><a href="https://researchmap.jp/read0101180" target="_blank" rel="noopener">researchmap</a></li>' +
                 '</ul>' +
                 '</div>' +
@@ -81,8 +76,7 @@
         // ヘッダーを挿入
         var headerPlaceholder = document.getElementById('header-template');
         if (headerPlaceholder) {
-            var isCompact = headerPlaceholder.getAttribute('data-compact') === 'true';
-            headerPlaceholder.outerHTML = templates.header({ compact: isCompact });
+            headerPlaceholder.outerHTML = templates.header();
         }
 
         // ナビゲーションを挿入
