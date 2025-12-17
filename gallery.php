@@ -312,12 +312,11 @@ $userType = getUserType();
                 if (data.success) {
                     loadGalleryData();
                 } else {
-                    alert('エラー: ' + (data.error || '削除に失敗しました'));
+                    console.error('削除エラー:', data.error || '削除に失敗しました');
                 }
             })
             .catch(function(error) {
-                alert('エラー: 削除に失敗しました');
-                console.error(error);
+                console.error('削除エラー:', error);
             });
         }
 
@@ -466,13 +465,12 @@ $userType = getUserType();
                         closeMsgModal();
                         loadGalleryData();
                     } else {
-                        alert('エラー: ' + (data.error || '保存に失敗しました'));
+                        console.error('保存エラー:', data.error || '保存に失敗しました');
                     }
                 })
                 .catch(function(error) {
                     uploadLoading.classList.remove('active');
-                    alert('エラー: 保存に失敗しました');
-                    console.error(error);
+                    console.error('保存エラー:', error);
                 });
             });
         }
