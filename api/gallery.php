@@ -53,11 +53,18 @@ if (!file_exists($uploadDir)) {
  */
 function loadGalleryData($galleryFile) {
     if (!file_exists($galleryFile)) {
-        return ['photos' => [], 'videos' => []];
+        return ['photos' => [], 'videos' => [], 'messages' => []];
     }
     $content = file_get_contents($galleryFile);
     $data = json_decode($content, true);
-    return $data ?: ['photos' => [], 'videos' => []];
+    if (!$data) {
+        return ['photos' => [], 'videos' => [], 'messages' => []];
+    }
+    // messagesキーがない場合は追加
+    if (!isset($data['messages'])) {
+        $data['messages'] = [];
+    }
+    return $data;
 }
 
 /**
@@ -150,7 +157,8 @@ try {
             echo json_encode([
                 'success' => true,
                 'photos' => $data['photos'],
-                'videos' => $data['videos']
+                'videos' => $data['videos'],
+                'messages' => $data['messages']
             ]);
             break;
 
@@ -241,6 +249,225 @@ try {
                 'success' => true,
                 'message' => 'アップロードしました',
                 'item' => $newItem,
+                'git' => $gitResult
+            ]);
+            break;
+
+        case 'add_message':
+            // 管理者のみメッセージ追加可能
+            if (!isAdmin()) {
+                throw new Exception('管理者権限が必要です');
+            }
+
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Method not allowed');
+            }
+
+            $author = trim($_POST['author'] ?? '');
+            $affiliation = trim($_POST['affiliation'] ?? '');
+            $relationship = trim($_POST['relationship'] ?? '');
+            $content = trim($_POST['content'] ?? '');
+
+            // ファイルがアップロードされたかチェック
+            $hasFiles = isset($_FILES['files']) && !empty($_FILES['files']['name'][0]);
+
+            if (empty($content) && !$hasFiles) {
+                throw new Exception('メッセージまたは写真・動画を入力してください');
+            }
+
+            $data = loadGalleryData($galleryFile);
+            $uploadedMedia = [];
+            $gitFiles = [];
+
+            // ファイルがある場合はアップロード処理
+            if ($hasFiles) {
+                $files = $_FILES['files'];
+                $fileCount = count($files['name']);
+
+                for ($i = 0; $i < $fileCount; $i++) {
+                    if ($files['error'][$i] !== UPLOAD_ERR_OK) {
+                        continue;
+                    }
+
+                    $tmpName = $files['tmp_name'][$i];
+                    $originalName = $files['name'][$i];
+
+                    // MIMEタイプをチェック
+                    $finfo = new finfo(FILEINFO_MIME_TYPE);
+                    $mimeType = $finfo->file($tmpName);
+
+                    $isPhoto = in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+                    $isVideo = in_array($mimeType, ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo']);
+
+                    if (!$isPhoto && !$isVideo) {
+                        continue; // 許可されていない形式はスキップ
+                    }
+
+                    // ファイルサイズチェック
+                    if ($files['size'][$i] > $config['max_file_size']) {
+                        continue;
+                    }
+
+                    // ファイルを保存
+                    $newFilename = sanitizeFilename($originalName);
+                    $subDir = $isPhoto ? 'photos' : 'videos';
+                    $targetDir = $uploadDir . '/' . $subDir;
+
+                    if (!file_exists($targetDir)) {
+                        mkdir($targetDir, 0755, true);
+                    }
+
+                    $targetPath = $targetDir . '/' . $newFilename;
+
+                    if (move_uploaded_file($tmpName, $targetPath)) {
+                        $mediaUrl = 'uploads/gallery/' . $subDir . '/' . $newFilename;
+                        $uploadedMedia[] = [
+                            'type' => $isPhoto ? 'photo' : 'video',
+                            'url' => $mediaUrl,
+                            'filename' => $newFilename
+                        ];
+                        $gitFiles[] = $mediaUrl;
+                    }
+                }
+            }
+
+            $newMessage = [
+                'id' => generateId(),
+                'author' => $author,
+                'affiliation' => $affiliation,
+                'relationship' => $relationship,
+                'content' => $content,
+                'media' => $uploadedMedia,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            array_unshift($data['messages'], $newMessage);
+            saveGalleryData($galleryFile, $data);
+
+            // GitHubに自動コミット＆プッシュ
+            $commitMsg = 'add: 追悼メッセージを追加';
+            if (!empty($uploadedMedia)) {
+                $commitMsg .= '（写真・動画' . count($uploadedMedia) . '件）';
+            }
+            $gitResult = gitCommitAndPush(
+                $config,
+                'data/gallery.json',
+                $commitMsg
+            );
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'メッセージを追加しました',
+                'item' => $newMessage,
+                'git' => $gitResult
+            ]);
+            break;
+
+        case 'update_message':
+            // 管理者のみメッセージ編集可能
+            if (!isAdmin()) {
+                throw new Exception('管理者権限が必要です');
+            }
+
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Method not allowed');
+            }
+
+            $id = $_POST['id'] ?? '';
+            $author = trim($_POST['author'] ?? '');
+            $affiliation = trim($_POST['affiliation'] ?? '');
+            $relationship = trim($_POST['relationship'] ?? '');
+            $content = trim($_POST['content'] ?? '');
+
+            if (empty($id)) {
+                throw new Exception('IDが指定されていません');
+            }
+
+            if (empty($content)) {
+                throw new Exception('メッセージ内容を入力してください');
+            }
+
+            $data = loadGalleryData($galleryFile);
+
+            // メッセージを検索して更新
+            $found = false;
+            foreach ($data['messages'] as $index => $msg) {
+                if ($msg['id'] === $id) {
+                    $data['messages'][$index]['author'] = $author;
+                    $data['messages'][$index]['affiliation'] = $affiliation;
+                    $data['messages'][$index]['relationship'] = $relationship;
+                    $data['messages'][$index]['content'] = $content;
+                    $data['messages'][$index]['updated_at'] = date('Y-m-d H:i:s');
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                throw new Exception('メッセージが見つかりません');
+            }
+
+            saveGalleryData($galleryFile, $data);
+
+            // GitHubに自動コミット＆プッシュ
+            $gitResult = gitCommitAndPush(
+                $config,
+                'data/gallery.json',
+                'update: 追悼メッセージを編集'
+            );
+
+            echo json_encode([
+                'success' => true,
+                'message' => '更新しました',
+                'git' => $gitResult
+            ]);
+            break;
+
+        case 'delete_message':
+            // 管理者のみメッセージ削除可能
+            if (!isAdmin()) {
+                throw new Exception('管理者権限が必要です');
+            }
+
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Method not allowed');
+            }
+
+            $input = json_decode(file_get_contents('php://input'), true);
+            $id = $input['id'] ?? $_POST['id'] ?? '';
+
+            if (empty($id)) {
+                throw new Exception('IDが指定されていません');
+            }
+
+            $data = loadGalleryData($galleryFile);
+
+            // メッセージを検索して削除
+            $found = false;
+            foreach ($data['messages'] as $index => $msg) {
+                if ($msg['id'] === $id) {
+                    array_splice($data['messages'], $index, 1);
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                throw new Exception('メッセージが見つかりません');
+            }
+
+            saveGalleryData($galleryFile, $data);
+
+            // GitHubに自動コミット＆プッシュ
+            $gitResult = gitCommitAndPush(
+                $config,
+                'data/gallery.json',
+                'remove: 追悼メッセージを削除'
+            );
+
+            echo json_encode([
+                'success' => true,
+                'message' => '削除しました',
                 'git' => $gitResult
             ]);
             break;

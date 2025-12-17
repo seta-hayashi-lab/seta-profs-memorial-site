@@ -37,18 +37,19 @@ $userType = getUserType();
                     <button type="button" class="logout-btn" id="logoutBtn">ログアウト</button>
                 </div>
 
-                <p class="gallery-intro">
-                    皆様からお寄せいただいた，瀬田先生との思い出のお写真・動画をご紹介いたします．
-                </p>
-
-                <!-- 統合ギャラリー -->
-                <div class="media-gallery" id="mediaGallery">
-                    <?php if ($isAdmin): ?>
-                    <div class="media-item admin-add-btn" id="addMediaBtn">
-                        <span class="add-icon">+</span>
-                        <span class="add-text">写真・動画を追加</span>
+                <!-- 追悼メッセージ一覧 -->
+                <div class="messages-section">
+                    <div class="messages-header">
+                        <h2>追悼メッセージ</h2>
+                        <?php if ($isAdmin): ?>
+                        <button type="button" class="admin-add-message-btn" id="addMessageBtn">
+                            <span class="add-icon">+</span> メッセージを追加
+                        </button>
+                        <?php endif; ?>
                     </div>
-                    <?php endif; ?>
+                    <div class="messages-list" id="messagesList">
+                        <!-- メッセージはJavaScriptで動的に生成 -->
+                    </div>
                 </div>
 
                 <div class="gallery-info-box">
@@ -58,59 +59,60 @@ $userType = getUserType();
                 </div>
 
                 <p class="gallery-note">
-                    故人のプライバシーに配慮し，適切なお写真・動画のみ掲載いたします．
+                    故人のプライバシーに配慮し，適切なメッセージ・お写真・動画のみ掲載いたします．
                 </p>
             </div>
         </section>
     </main>
 
-    <!-- ライトボックス -->
-    <div id="lightbox" class="lightbox">
-        <button class="lightbox-close" aria-label="閉じる">&times;</button>
-        <div class="lightbox-content">
-            <img id="lightboxImage" src="" alt="">
-            <div id="lightboxCaption" class="lightbox-caption"></div>
-        </div>
-        <button class="lightbox-prev" aria-label="前へ">&#10094;</button>
-        <button class="lightbox-next" aria-label="次へ">&#10095;</button>
-    </div>
-
     <?php if ($isAdmin): ?>
-    <!-- 管理者用アップロードモーダル -->
-    <div id="adminUploadModal" class="modal-overlay">
-        <div class="modal-content admin-upload-modal">
-            <button type="button" class="modal-close-btn" id="closeUploadModal">&times;</button>
-            <h3 class="modal-title" id="uploadModalTitle">写真・動画を追加</h3>
+    <!-- 管理者用メッセージ追加モーダル -->
+    <div id="messageModal" class="modal-overlay">
+        <div class="modal-content message-modal">
+            <button type="button" class="modal-close-btn" id="closeMessageModal">&times;</button>
+            <h3 class="modal-title" id="messageModalTitle">追悼メッセージを追加</h3>
 
-            <form id="adminUploadForm" class="admin-upload-form">
-                <input type="hidden" id="uploadType" name="type" value="photo">
+            <form id="messageForm" class="message-form">
+                <input type="hidden" id="messageId" name="id" value="">
 
                 <div class="form-group">
-                    <label for="uploadFile">ファイルを選択</label>
+                    <label for="msgAuthor">お名前</label>
+                    <input type="text" id="msgAuthor" name="author" placeholder="例：山田 太郎">
+                </div>
+
+                <div class="form-group">
+                    <label for="msgAffiliation">ご所属</label>
+                    <input type="text" id="msgAffiliation" name="affiliation" placeholder="例：○○大学">
+                </div>
+
+                <div class="form-group">
+                    <label for="msgRelationship">瀬田先生との関係</label>
+                    <input type="text" id="msgRelationship" name="relationship" placeholder="例：元学生，共同研究者 など">
+                </div>
+
+                <div class="form-group">
+                    <label for="msgContent">メッセージ</label>
+                    <textarea id="msgContent" name="content" rows="6" placeholder="追悼メッセージを入力してください"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="msgFiles">写真・動画（複数選択可）</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="uploadFile" name="file" accept="image/*,video/*">
-                        <span class="file-input-text" id="uploadFileText">写真または動画を選択してください</span>
+                        <input type="file" id="msgFiles" name="files" accept="image/*,video/*" multiple>
+                        <span class="file-input-text" id="msgFilesText">ファイルを選択してください</span>
                     </div>
                 </div>
 
-                <div class="form-group" id="previewGroup" style="display: none;">
+                <div class="form-group" id="msgPreviewGroup" style="display: none;">
                     <label>プレビュー</label>
-                    <div id="uploadPreview" class="upload-preview"></div>
+                    <div id="msgPreview" class="upload-preview-grid"></div>
                 </div>
 
-                <div class="form-group">
-                    <label for="uploadAuthor">投稿者名</label>
-                    <input type="text" id="uploadAuthor" name="author" placeholder="例：山田 太郎">
-                </div>
-
-                <div class="form-group">
-                    <label for="uploadCaption">キャプション・メッセージ</label>
-                    <textarea id="uploadCaption" name="caption" rows="4" placeholder="写真・動画の説明やメッセージを入力"></textarea>
-                </div>
+                <p class="form-note">※ メッセージのみ，写真・動画のみ，または両方を追加できます</p>
 
                 <div class="form-actions">
-                    <button type="button" class="cancel-btn" id="cancelUpload">キャンセル</button>
-                    <button type="submit" class="submit-btn" id="submitUpload">追加する</button>
+                    <button type="button" class="cancel-btn" id="cancelMessage">キャンセル</button>
+                    <button type="submit" class="submit-btn" id="submitMessage">追加する</button>
                 </div>
             </form>
         </div>
@@ -135,7 +137,6 @@ $userType = getUserType();
         'use strict';
 
         var isAdmin = document.body.dataset.userType === 'admin';
-        var allPhotos = [];
 
         // ログアウト処理
         document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -165,7 +166,7 @@ $userType = getUserType();
             })
             .then(function(data) {
                 if (data.success) {
-                    renderMedia(data.photos || [], data.videos || []);
+                    renderMessages(data.messages || []);
                 }
             })
             .catch(function(error) {
@@ -173,147 +174,105 @@ $userType = getUserType();
             });
         }
 
-        // 写真と動画を統合して表示
-        function renderMedia(photos, videos) {
-            var gallery = document.getElementById('mediaGallery');
-            var addBtn = document.getElementById('addMediaBtn');
+        // メッセージを表示
+        function renderMessages(messages) {
+            var list = document.getElementById('messagesList');
+            list.innerHTML = '';
 
-            // 既存のアイテム（+ボタン以外）を削除
-            var existingItems = gallery.querySelectorAll('.media-item:not(.admin-add-btn)');
-            existingItems.forEach(function(item) {
-                item.remove();
-            });
+            if (messages.length === 0) {
+                list.innerHTML = '<p class="no-messages">まだメッセージがありません</p>';
+                return;
+            }
 
-            // 写真と動画を日時順にマージ
-            var allMedia = [];
+            messages.forEach(function(msg) {
+                var card = document.createElement('div');
+                card.className = 'message-card';
+                card.dataset.id = msg.id;
 
-            photos.forEach(function(photo) {
-                allMedia.push({
-                    type: 'photo',
-                    data: photo,
-                    created_at: photo.created_at || '2000-01-01'
-                });
-            });
+                var html = '';
 
-            videos.forEach(function(video) {
-                allMedia.push({
-                    type: 'video',
-                    data: video,
-                    created_at: video.created_at || '2000-01-01'
-                });
-            });
+                // メッセージ内容（あれば）
+                if (msg.content) {
+                    html += '<div class="message-content">' + escapeHtml(msg.content).replace(/\n/g, '<br>') + '</div>';
+                }
 
-            // 日時順（新しい順）にソート
-            allMedia.sort(function(a, b) {
-                return new Date(b.created_at) - new Date(a.created_at);
-            });
-
-            // ライトボックス用に写真だけを保存
-            allPhotos = photos;
-
-            // メディアを描画
-            allMedia.forEach(function(media, index) {
-                var item = document.createElement('div');
-                item.className = 'media-item';
-                item.dataset.id = media.data.id;
-                item.dataset.type = media.type;
-
-                if (media.type === 'photo') {
-                    item.classList.add('media-photo');
-
-                    var img = document.createElement('img');
-                    img.src = media.data.url;
-                    img.alt = media.data.caption || '瀬田先生のお写真';
-                    img.loading = 'lazy';
-                    item.appendChild(img);
-
-                    // 写真のインデックスを保存（ライトボックス用）
-                    var photoIndex = allPhotos.findIndex(function(p) { return p.id === media.data.id; });
-                    item.dataset.photoIndex = photoIndex;
-
-                    item.addEventListener('click', function() {
-                        openLightboxWithData(allPhotos, photoIndex);
+                // メディア（あれば）
+                if (msg.media && msg.media.length > 0) {
+                    html += '<div class="message-media">';
+                    msg.media.forEach(function(media) {
+                        if (media.type === 'photo') {
+                            html += '<div class="message-media-item message-photo">';
+                            html += '<img src="' + escapeHtml(media.url) + '" alt="添付写真" loading="lazy">';
+                            html += '</div>';
+                        } else if (media.type === 'video') {
+                            html += '<div class="message-media-item message-video">';
+                            html += '<video src="' + escapeHtml(media.url) + '" controls preload="metadata"></video>';
+                            html += '</div>';
+                        }
                     });
-                } else {
-                    item.classList.add('media-video');
-
-                    var videoEl = document.createElement('video');
-                    videoEl.src = media.data.url;
-                    videoEl.controls = true;
-                    videoEl.preload = 'metadata';
-                    item.appendChild(videoEl);
+                    html += '</div>';
                 }
 
-                // オーバーレイ（投稿者名表示）
-                if (media.data.author) {
-                    var overlay = document.createElement('div');
-                    overlay.className = 'media-item-overlay';
-                    overlay.innerHTML = '<span class="media-author">' + escapeHtml(media.data.author) + '</span>';
-                    if (media.type === 'video') {
-                        overlay.innerHTML += '<span class="media-type-badge">動画</span>';
-                    }
-                    item.appendChild(overlay);
-                } else if (media.type === 'video') {
-                    var overlay = document.createElement('div');
-                    overlay.className = 'media-item-overlay';
-                    overlay.innerHTML = '<span class="media-type-badge">動画</span>';
-                    item.appendChild(overlay);
+                // メタ情報
+                html += '<div class="message-meta">';
+                if (msg.author) {
+                    html += '<span class="message-author">' + escapeHtml(msg.author) + '</span>';
+                }
+                if (msg.affiliation) {
+                    html += '<span class="message-affiliation">' + escapeHtml(msg.affiliation) + '</span>';
+                }
+                if (msg.relationship) {
+                    html += '<span class="message-relationship">' + escapeHtml(msg.relationship) + '</span>';
+                }
+                html += '</div>';
+
+                card.innerHTML = html;
+
+                // 管理者用の編集・削除ボタン
+                if (isAdmin) {
+                    var actions = document.createElement('div');
+                    actions.className = 'message-actions';
+                    actions.innerHTML = '<button type="button" class="edit-btn" data-id="' + msg.id + '">編集</button>' +
+                                       '<button type="button" class="delete-btn" data-id="' + msg.id + '">削除</button>';
+                    card.appendChild(actions);
+
+                    // 編集ボタン
+                    actions.querySelector('.edit-btn').addEventListener('click', function() {
+                        openMessageModal(msg);
+                    });
+
+                    // 削除ボタン
+                    actions.querySelector('.delete-btn').addEventListener('click', function() {
+                        if (confirm('このメッセージを削除しますか？')) {
+                            deleteMessage(msg.id);
+                        }
+                    });
                 }
 
-                if (addBtn) {
-                    gallery.insertBefore(item, addBtn);
-                } else {
-                    gallery.appendChild(item);
-                }
+                list.appendChild(card);
             });
         }
 
-        // ライトボックスを開く
-        function openLightboxWithData(photos, index) {
-            var lightbox = document.getElementById('lightbox');
-            var lightboxImage = document.getElementById('lightboxImage');
-            var lightboxCaption = document.getElementById('lightboxCaption');
-
-            if (!lightbox || photos.length === 0 || index < 0) return;
-
-            var currentIndex = index;
-
-            function showImage(idx) {
-                var photo = photos[idx];
-                lightboxImage.src = photo.url;
-                var captionText = '';
-                if (photo.author) captionText += photo.author;
-                if (photo.caption) captionText += (captionText ? ' - ' : '') + photo.caption;
-                lightboxCaption.textContent = captionText;
-            }
-
-            showImage(currentIndex);
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // ナビゲーション
-            var prevBtn = lightbox.querySelector('.lightbox-prev');
-            var nextBtn = lightbox.querySelector('.lightbox-next');
-            var closeBtn = lightbox.querySelector('.lightbox-close');
-
-            function navigate(dir) {
-                currentIndex += dir;
-                if (currentIndex < 0) currentIndex = photos.length - 1;
-                if (currentIndex >= photos.length) currentIndex = 0;
-                showImage(currentIndex);
-            }
-
-            function closeLightbox() {
-                lightbox.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            prevBtn.onclick = function() { navigate(-1); };
-            nextBtn.onclick = function() { navigate(1); };
-            closeBtn.onclick = closeLightbox;
-            lightbox.onclick = function(e) {
-                if (e.target === lightbox) closeLightbox();
-            };
+        // メッセージを削除
+        function deleteMessage(id) {
+            fetch('api/gallery.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete_message', id: id }),
+                credentials: 'same-origin'
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    loadGalleryData();
+                } else {
+                    alert('エラー: ' + (data.error || '削除に失敗しました'));
+                }
+            })
+            .catch(function(error) {
+                alert('エラー: 削除に失敗しました');
+                console.error(error);
+            });
         }
 
         function escapeHtml(text) {
@@ -327,119 +286,146 @@ $userType = getUserType();
 
         // 管理者用機能
         if (isAdmin) {
-            var modal = document.getElementById('adminUploadModal');
-            var uploadForm = document.getElementById('adminUploadForm');
             var uploadLoading = document.getElementById('uploadLoading');
-            var fileInput = document.getElementById('uploadFile');
-            var fileText = document.getElementById('uploadFileText');
-            var previewGroup = document.getElementById('previewGroup');
-            var previewDiv = document.getElementById('uploadPreview');
-            var uploadType = document.getElementById('uploadType');
 
-            // メディア追加ボタン
-            var addMediaBtn = document.getElementById('addMediaBtn');
-            if (addMediaBtn) {
-                addMediaBtn.addEventListener('click', function() {
-                    fileInput.accept = 'image/*,video/*';
-                    resetForm();
-                    modal.classList.add('active');
+            // === メッセージ管理機能 ===
+            var msgModal = document.getElementById('messageModal');
+            var msgForm = document.getElementById('messageForm');
+            var msgModalTitle = document.getElementById('messageModalTitle');
+            var msgSubmitBtn = document.getElementById('submitMessage');
+            var msgFilesInput = document.getElementById('msgFiles');
+            var msgFilesText = document.getElementById('msgFilesText');
+            var msgPreviewGroup = document.getElementById('msgPreviewGroup');
+            var msgPreviewDiv = document.getElementById('msgPreview');
+
+            // メッセージ追加ボタン
+            var addMsgBtn = document.getElementById('addMessageBtn');
+            if (addMsgBtn) {
+                addMsgBtn.addEventListener('click', function() {
+                    openMessageModal(null);
                 });
             }
 
             // モーダルを閉じる
-            document.getElementById('closeUploadModal').addEventListener('click', closeModal);
-            document.getElementById('cancelUpload').addEventListener('click', closeModal);
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
+            document.getElementById('closeMessageModal').addEventListener('click', closeMsgModal);
+            document.getElementById('cancelMessage').addEventListener('click', closeMsgModal);
+            msgModal.addEventListener('click', function(e) {
+                if (e.target === msgModal) closeMsgModal();
             });
 
-            function closeModal() {
-                modal.classList.remove('active');
-                resetForm();
-            }
-
-            function resetForm() {
-                uploadForm.reset();
-                fileText.textContent = '写真または動画を選択してください';
-                previewGroup.style.display = 'none';
-                previewDiv.innerHTML = '';
-                uploadType.value = 'photo';
+            function closeMsgModal() {
+                msgModal.classList.remove('active');
+                msgForm.reset();
+                document.getElementById('messageId').value = '';
+                msgFilesText.textContent = 'ファイルを選択してください';
+                msgPreviewGroup.style.display = 'none';
+                msgPreviewDiv.innerHTML = '';
             }
 
             // ファイル選択時のプレビュー
-            fileInput.addEventListener('change', function() {
-                var file = fileInput.files[0];
-                if (!file) {
-                    fileText.textContent = '写真または動画を選択してください';
-                    previewGroup.style.display = 'none';
-                    uploadType.value = 'photo';
+            msgFilesInput.addEventListener('change', function() {
+                var files = msgFilesInput.files;
+                if (!files || files.length === 0) {
+                    msgFilesText.textContent = 'ファイルを選択してください';
+                    msgPreviewGroup.style.display = 'none';
+                    msgPreviewDiv.innerHTML = '';
                     return;
                 }
 
-                fileText.textContent = file.name;
-                previewDiv.innerHTML = '';
+                msgFilesText.textContent = files.length + '件のファイルを選択中';
+                msgPreviewDiv.innerHTML = '';
 
-                if (file.type.startsWith('image/')) {
-                    uploadType.value = 'photo';
-                    var img = document.createElement('img');
-                    img.className = 'preview-image';
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        img.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                    previewDiv.appendChild(img);
-                    previewGroup.style.display = 'block';
-                } else if (file.type.startsWith('video/')) {
-                    uploadType.value = 'video';
-                    var video = document.createElement('video');
-                    video.className = 'preview-video';
-                    video.controls = true;
-                    video.src = URL.createObjectURL(file);
-                    previewDiv.appendChild(video);
-                    previewGroup.style.display = 'block';
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    var previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+
+                    if (file.type.startsWith('image/')) {
+                        var img = document.createElement('img');
+                        img.className = 'preview-thumb';
+                        (function(imgEl, f) {
+                            var reader = new FileReader();
+                            reader.onload = function(e) { imgEl.src = e.target.result; };
+                            reader.readAsDataURL(f);
+                        })(img, file);
+                        previewItem.appendChild(img);
+                    } else if (file.type.startsWith('video/')) {
+                        var video = document.createElement('video');
+                        video.className = 'preview-thumb';
+                        video.src = URL.createObjectURL(file);
+                        previewItem.appendChild(video);
+                        var badge = document.createElement('span');
+                        badge.className = 'preview-badge';
+                        badge.textContent = '動画';
+                        previewItem.appendChild(badge);
+                    }
+
+                    msgPreviewDiv.appendChild(previewItem);
                 }
+                msgPreviewGroup.style.display = 'block';
             });
 
-            // アップロード処理
-            uploadForm.addEventListener('submit', function(e) {
+            // メッセージモーダルを開く（新規 or 編集）
+            window.openMessageModal = function(msg) {
+                closeMsgModal(); // まずリセット
+                if (msg) {
+                    // 編集モード
+                    msgModalTitle.textContent = '追悼メッセージを編集';
+                    msgSubmitBtn.textContent = '更新する';
+                    document.getElementById('messageId').value = msg.id;
+                    document.getElementById('msgAuthor').value = msg.author || '';
+                    document.getElementById('msgAffiliation').value = msg.affiliation || '';
+                    document.getElementById('msgRelationship').value = msg.relationship || '';
+                    document.getElementById('msgContent').value = msg.content || '';
+                } else {
+                    // 新規モード
+                    msgModalTitle.textContent = '追悼メッセージを追加';
+                    msgSubmitBtn.textContent = '追加する';
+                }
+                msgModal.classList.add('active');
+            };
+
+            // メッセージ送信
+            msgForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                var file = fileInput.files[0];
-                if (!file) {
-                    alert('ファイルを選択してください');
-                    return;
-                }
+                var msgId = document.getElementById('messageId').value;
+                var action = msgId ? 'update_message' : 'add_message';
 
                 uploadLoading.classList.add('active');
 
                 var formData = new FormData();
-                formData.append('action', 'upload');
-                formData.append('type', uploadType.value);
-                formData.append('file', file);
-                formData.append('author', document.getElementById('uploadAuthor').value);
-                formData.append('caption', document.getElementById('uploadCaption').value);
+                formData.append('action', action);
+                if (msgId) formData.append('id', msgId);
+                formData.append('author', document.getElementById('msgAuthor').value);
+                formData.append('affiliation', document.getElementById('msgAffiliation').value);
+                formData.append('relationship', document.getElementById('msgRelationship').value);
+                formData.append('content', document.getElementById('msgContent').value);
+
+                // ファイルを追加（複数対応）
+                var files = msgFilesInput.files;
+                for (var i = 0; i < files.length; i++) {
+                    formData.append('files[]', files[i]);
+                }
 
                 fetch('api/gallery.php', {
                     method: 'POST',
                     body: formData,
                     credentials: 'same-origin'
                 })
-                .then(function(response) {
-                    return response.json();
-                })
+                .then(function(response) { return response.json(); })
                 .then(function(data) {
                     uploadLoading.classList.remove('active');
                     if (data.success) {
-                        closeModal();
+                        closeMsgModal();
                         loadGalleryData();
                     } else {
-                        alert('エラー: ' + (data.error || 'アップロードに失敗しました'));
+                        alert('エラー: ' + (data.error || '保存に失敗しました'));
                     }
                 })
                 .catch(function(error) {
                     uploadLoading.classList.remove('active');
-                    alert('エラー: アップロードに失敗しました');
+                    alert('エラー: 保存に失敗しました');
                     console.error(error);
                 });
             });
