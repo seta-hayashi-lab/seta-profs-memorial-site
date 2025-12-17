@@ -39,8 +39,8 @@ $userType = getUserType();
 
                 <!-- 追悼メッセージ一覧 -->
                 <div class="messages-section">
-                    <div class="messages-header">
-                        <h2>追悼メッセージ</h2>
+                    <div class="messages-controls">
+                        <button type="button" class="expand-all-btn" id="expandAllBtn">すべてのメッセージの全文を開く</button>
                         <?php if ($isAdmin): ?>
                         <button type="button" class="admin-add-message-btn" id="addMessageBtn">
                             <span class="add-icon">+</span> メッセージを追加
@@ -216,9 +216,12 @@ $userType = getUserType();
                     html += '</div>';
                 }
 
-                // 2. メッセージ内容
+                // 2. メッセージ内容（3行以上は折りたたみ）
                 if (msg.content) {
-                    html += '<div class="message-content">' + escapeHtml(msg.content).replace(/\n/g, '<br>') + '</div>';
+                    html += '<div class="message-content-wrapper">';
+                    html += '<div class="message-content collapsed">' + escapeHtml(msg.content).replace(/\n/g, '<br>') + '</div>';
+                    html += '<button type="button" class="message-toggle">全文を見る</button>';
+                    html += '</div>';
                 }
 
                 // 3. メタ情報（名前・所属・関係）を一番下に
@@ -261,6 +264,31 @@ $userType = getUserType();
                         openLightbox(img.src);
                     });
                 });
+
+                // メッセージ折りたたみ処理
+                var contentWrapper = card.querySelector('.message-content-wrapper');
+                if (contentWrapper) {
+                    var content = contentWrapper.querySelector('.message-content');
+                    var toggle = contentWrapper.querySelector('.message-toggle');
+
+                    // 3行以下の場合はトグルボタンを非表示
+                    setTimeout(function() {
+                        if (content.scrollHeight <= content.clientHeight + 5) {
+                            toggle.style.display = 'none';
+                            content.classList.remove('collapsed');
+                        }
+                    }, 10);
+
+                    toggle.addEventListener('click', function() {
+                        if (content.classList.contains('collapsed')) {
+                            content.classList.remove('collapsed');
+                            toggle.textContent = '閉じる';
+                        } else {
+                            content.classList.add('collapsed');
+                            toggle.textContent = '全文を見る';
+                        }
+                    });
+                }
             });
         }
 
@@ -328,6 +356,41 @@ $userType = getUserType();
 
         // ギャラリーデータを読み込み
         loadGalleryData();
+
+        // 「すべてのメッセージの全文を開く」ボタン
+        var expandAllBtn = document.getElementById('expandAllBtn');
+        var allExpanded = false;
+
+        expandAllBtn.addEventListener('click', function() {
+            var contents = document.querySelectorAll('.message-content');
+            var toggles = document.querySelectorAll('.message-toggle');
+
+            if (allExpanded) {
+                // すべて閉じる
+                contents.forEach(function(content) {
+                    content.classList.add('collapsed');
+                });
+                toggles.forEach(function(toggle) {
+                    if (toggle.style.display !== 'none') {
+                        toggle.textContent = '全文を見る';
+                    }
+                });
+                expandAllBtn.textContent = 'すべてのメッセージの全文を開く';
+                allExpanded = false;
+            } else {
+                // すべて開く
+                contents.forEach(function(content) {
+                    content.classList.remove('collapsed');
+                });
+                toggles.forEach(function(toggle) {
+                    if (toggle.style.display !== 'none') {
+                        toggle.textContent = '閉じる';
+                    }
+                });
+                expandAllBtn.textContent = 'すべてのメッセージを閉じる';
+                allExpanded = true;
+            }
+        });
 
         // 管理者用機能
         if (isAdmin) {
