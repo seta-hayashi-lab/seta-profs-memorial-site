@@ -253,10 +253,10 @@ $userType = getUserType();
                     html += '</div>';
                 }
 
-                // 2. メッセージ内容（3行以上は折りたたみ）
+                // 2. メッセージ内容（3行以上は折りたたみ）- HTMLをそのまま表示
                 if (msg.content) {
                     html += '<div class="message-content-wrapper">';
-                    html += '<div class="message-content collapsed">' + escapeHtml(msg.content).replace(/\n/g, '<br>') + '</div>';
+                    html += '<div class="message-content collapsed">' + msg.content + '</div>';
                     html += '<button type="button" class="message-toggle">全文を見る</button>';
                     html += '</div>';
                 }
