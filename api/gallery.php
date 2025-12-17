@@ -100,24 +100,45 @@ function sanitizeFilename($filename) {
  * GitHubにコミット＆プッシュ
  */
 function gitCommitAndPush($config, $filePath, $message) {
+    $logFile = dirname(__DIR__) . '/uploads/git-debug.log';
+    $log = function($msg) use ($logFile) {
+        file_put_contents($logFile, date('[Y-m-d H:i:s] ') . $msg . "\n", FILE_APPEND);
+    };
+
+    $log("=== Git Auto Push Start ===");
+    $log("git_auto_push config: " . var_export($config['git_auto_push'] ?? null, true));
+
     if (empty($config['git_auto_push']) || $config['git_auto_push'] !== true) {
+        $log("Skipped: git_auto_push is not enabled");
         return ['success' => false, 'skipped' => true];
     }
 
     $repoDir = dirname(__DIR__);
+    $log("Repo dir: " . $repoDir);
+    $log("File path: " . $filePath);
+    $log("Current user: " . exec('whoami'));
+
     $output = [];
     $returnCode = 0;
 
     $commands = [
+        "cd " . escapeshellarg($repoDir) . " && git status",
         "cd " . escapeshellarg($repoDir) . " && git add " . escapeshellarg($filePath),
         "cd " . escapeshellarg($repoDir) . " && git add uploads/gallery.json",
         "cd " . escapeshellarg($repoDir) . " && git commit -m " . escapeshellarg($message),
-        "cd " . escapeshellarg($repoDir) . " && git push"
+        "cd " . escapeshellarg($repoDir) . " && git push 2>&1"
     ];
 
     foreach ($commands as $cmd) {
-        exec($cmd . " 2>&1", $output, $returnCode);
+        $log("Executing: " . $cmd);
+        $cmdOutput = [];
+        exec($cmd . " 2>&1", $cmdOutput, $returnCode);
+        $log("Return code: " . $returnCode);
+        $log("Output: " . implode("\n", $cmdOutput));
+        $output = array_merge($output, $cmdOutput);
+
         if ($returnCode !== 0 && strpos($cmd, 'git push') !== false) {
+            $log("ERROR: Push failed");
             return [
                 'success' => false,
                 'error' => implode("\n", $output),
@@ -126,6 +147,7 @@ function gitCommitAndPush($config, $filePath, $message) {
         }
     }
 
+    $log("=== Git Auto Push Complete ===");
     return ['success' => true, 'output' => implode("\n", $output)];
 }
 
