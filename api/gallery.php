@@ -121,16 +121,27 @@ function gitCommitAndPush($config, $filePath, $message) {
     $output = [];
     $returnCode = 0;
 
+    // GitHub認証情報（Personal Access Token使用）
+    $gitToken = env('GIT_TOKEN', '');
+    $gitRepo = env('GIT_REPO', 'seta-hayashi-lab/seta-profs-memorial-site');
+
+    $pushCmd = "cd " . escapeshellarg($repoDir) . " && git push";
+    if (!empty($gitToken)) {
+        $pushCmd = "cd " . escapeshellarg($repoDir) . " && git push https://" . $gitToken . "@github.com/" . $gitRepo . ".git main 2>&1";
+    }
+
     $commands = [
         "cd " . escapeshellarg($repoDir) . " && git status",
         "cd " . escapeshellarg($repoDir) . " && git add " . escapeshellarg($filePath),
         "cd " . escapeshellarg($repoDir) . " && git add uploads/gallery.json",
         "cd " . escapeshellarg($repoDir) . " && git commit -m " . escapeshellarg($message),
-        "cd " . escapeshellarg($repoDir) . " && git push 2>&1"
+        $pushCmd
     ];
 
     foreach ($commands as $cmd) {
-        $log("Executing: " . $cmd);
+        // トークンをログに出力しない
+        $logCmd = preg_replace('/https:\/\/[^@]+@/', 'https://***@', $cmd);
+        $log("Executing: " . $logCmd);
         $cmdOutput = [];
         exec($cmd . " 2>&1", $cmdOutput, $returnCode);
         $log("Return code: " . $returnCode);
