@@ -561,6 +561,71 @@ ul {
 }
 
 /* =====================================================
+   先生のお言葉ページ
+   ===================================================== */
+.words-section {
+    padding: var(--spacing-xxl) 0;
+    background: linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 100%);
+}
+
+.words-intro {
+    max-width: var(--container-narrow);
+    margin: 0 auto var(--spacing-xl);
+    text-align: center;
+    color: var(--text-secondary);
+    line-height: 2.2;
+    font-size: 0.95rem;
+}
+
+.words-list {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+}
+
+.word-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+}
+
+.word-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--color-gold), transparent);
+}
+
+.word-content {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 2.2;
+    margin: 0;
+    padding-left: var(--spacing-md);
+}
+
+.word-content p {
+    margin-bottom: var(--spacing-md);
+}
+
+.word-content p:last-child {
+    margin-bottom: 0;
+}
+
+.word-source {
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: var(--spacing-md);
+    padding-left: var(--spacing-md);
+}
+
+/* =====================================================
    研究業績ページ
    ===================================================== */
 .research-section {
@@ -1919,50 +1984,35 @@ ul {
         font-size: 0.75rem;
     }
 
-    /* スマホ版：ハンバーガーメニュー廃止、グリッドレイアウト（3列+2列） */
+    /* スマホ版：ハンバーガーメニュー廃止、3行3列グリッドレイアウト */
     .hamburger-btn {
         display: none;
     }
 
     .nav-list {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         width: 100%;
         padding: 0;
         background-color: var(--bg-dark);
-    }
-
-    /* 上段3つ：各2列分 */
-    .nav-list li:nth-child(1),
-    .nav-list li:nth-child(2),
-    .nav-list li:nth-child(3) {
-        grid-column: span 2;
-    }
-
-    /* 下段2つ：各3列分で中央配置 */
-    .nav-list li:nth-child(4),
-    .nav-list li:nth-child(5) {
-        grid-column: span 3;
     }
 
     .nav-list li {
         border-bottom: none;
     }
 
-    /* 上段の区切り線（縦） */
+    /* 各行の右2つに縦の区切り線 */
     .nav-list li:nth-child(1),
-    .nav-list li:nth-child(2) {
-        border-right: 1px solid var(--border-subtle);
-    }
-
-    /* 下段の区切り線（縦） */
-    .nav-list li:nth-child(4) {
-        border-right: 1px solid var(--border-subtle);
-    }
-
-    /* 上段と下段の区切り線（横） */
+    .nav-list li:nth-child(2),
     .nav-list li:nth-child(4),
     .nav-list li:nth-child(5) {
+        border-right: 1px solid var(--border-subtle);
+    }
+
+    /* 2行目・3行目の上に横の区切り線 */
+    .nav-list li:nth-child(4),
+    .nav-list li:nth-child(5),
+    .nav-list li:nth-child(6) {
         border-top: 1px solid var(--border-subtle);
     }
 

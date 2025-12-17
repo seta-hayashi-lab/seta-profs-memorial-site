@@ -30,6 +30,7 @@
         navigation: function(activePage) {
             var navItems = [
                 { href: 'index.html', label: '追悼の辞', id: 'index' },
+                { href: 'words.html', label: '先生のお言葉', id: 'words' },
                 { href: 'research.html', label: '学問へのご貢献', id: 'research' },
                 { href: 'gallery.php', label: '追悼メッセージ一覧', id: 'gallery', requiresLogin: true },
                 { href: 'messages.php', label: 'メッセージを送る', id: 'messages' },
@@ -58,18 +59,8 @@
         footer: function() {
             return '<footer class="site-footer">' +
                 '<div class="container">' +
-                '<div class="footer-content">' +
-                '<div class="footer-links">' +
-                '<h4>外部リンク</h4>' +
-                '<ul>' +
-                '<li><a href="https://kshci-lab.net/" target="_blank" rel="noopener">瀬田・林・油谷研究室</a></li>' +
-                '<li><a href="https://nrid.nii.ac.jp/ja/nrid/1000050304051/" target="_blank" rel="noopener">KAKEN</a></li>' +
-                '<li><a href="https://researchmap.jp/read0101180" target="_blank" rel="noopener">researchmap</a></li>' +
-                '</ul>' +
-                '</div>' +
-                '</div>' +
                 '<div class="footer-bottom">' +
-                '<p>&copy; 2025 瀬田和久先生追悼サイト</p>' +
+                '<p>&copy; 2025 瀬田・林・油谷研究室 | <a href="https://kshci-lab.net/" target="_blank" rel="noopener">研究室HP</a></p>' +
                 '</div>' +
                 '</div>' +
                 '</footer>';
