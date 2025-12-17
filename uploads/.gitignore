@@ -1,4 +1,5 @@
-# ギャラリーファイルはGitHubにコミット（GIT_AUTO_PUSH=true の場合）
-# ディレクトリ構造を保持するための .gitkeep
-!gallery/photos/.gitkeep
-!gallery/videos/.gitkeep
+# このディレクトリ内のファイルはすべてGit管理する
+# （gallery.json, アップロードされた写真・動画など）
+
+# macOSのシステムファイルのみ除外
+.DS_Store

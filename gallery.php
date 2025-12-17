@@ -127,6 +127,14 @@ $userType = getUserType();
     </div>
     <?php endif; ?>
 
+    <!-- 画像拡大モーダル -->
+    <div id="imageLightbox" class="lightbox">
+        <button type="button" class="lightbox-close" aria-label="閉じる">&times;</button>
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="拡大画像">
+        </div>
+    </div>
+
     <!-- フッター（テンプレートから生成） -->
     <div id="footer-template"></div>
 
@@ -191,12 +199,7 @@ $userType = getUserType();
 
                 var html = '';
 
-                // メッセージ内容（あれば）
-                if (msg.content) {
-                    html += '<div class="message-content">' + escapeHtml(msg.content).replace(/\n/g, '<br>') + '</div>';
-                }
-
-                // メディア（あれば）
+                // 1. メディア（写真・動画）を一番上に
                 if (msg.media && msg.media.length > 0) {
                     html += '<div class="message-media">';
                     msg.media.forEach(function(media) {
@@ -213,18 +216,19 @@ $userType = getUserType();
                     html += '</div>';
                 }
 
-                // メタ情報
-                html += '<div class="message-meta">';
-                if (msg.author) {
-                    html += '<span class="message-author">' + escapeHtml(msg.author) + '</span>';
+                // 2. メッセージ内容
+                if (msg.content) {
+                    html += '<div class="message-content">' + escapeHtml(msg.content).replace(/\n/g, '<br>') + '</div>';
                 }
-                if (msg.affiliation) {
-                    html += '<span class="message-affiliation">' + escapeHtml(msg.affiliation) + '</span>';
+
+                // 3. メタ情報（名前・所属・関係）を一番下に
+                var metaParts = [];
+                if (msg.author) metaParts.push(escapeHtml(msg.author));
+                if (msg.affiliation) metaParts.push(escapeHtml(msg.affiliation));
+                if (msg.relationship) metaParts.push(escapeHtml(msg.relationship));
+                if (metaParts.length > 0) {
+                    html += '<div class="message-meta">' + metaParts.join(' / ') + '</div>';
                 }
-                if (msg.relationship) {
-                    html += '<span class="message-relationship">' + escapeHtml(msg.relationship) + '</span>';
-                }
-                html += '</div>';
 
                 card.innerHTML = html;
 
@@ -250,15 +254,57 @@ $userType = getUserType();
                 }
 
                 list.appendChild(card);
+
+                // 画像クリックでライトボックス表示
+                card.querySelectorAll('.message-photo img').forEach(function(img) {
+                    img.addEventListener('click', function() {
+                        openLightbox(img.src);
+                    });
+                });
             });
         }
 
+        // ライトボックス制御
+        var lightbox = document.getElementById('imageLightbox');
+        var lightboxImage = document.getElementById('lightboxImage');
+        var lightboxClose = document.querySelector('.lightbox-close');
+
+        function openLightbox(src) {
+            lightboxImage.src = src;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            lightboxImage.src = '';
+            document.body.style.overflow = '';
+        }
+
+        if (lightboxClose) {
+            lightboxClose.addEventListener('click', closeLightbox);
+        }
+
+        if (lightbox) {
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+
         // メッセージを削除
         function deleteMessage(id) {
-            fetch('api/gallery.php', {
+            fetch('api/gallery.php?action=delete_message', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'delete_message', id: id }),
+                body: JSON.stringify({ id: id }),
                 credentials: 'same-origin'
             })
             .then(function(response) { return response.json(); })
