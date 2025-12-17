@@ -96,72 +96,6 @@ function sanitizeFilename($filename) {
     return generateId() . '.' . $ext;
 }
 
-/**
- * GitHubにコミット＆プッシュ
- */
-function gitCommitAndPush($config, $filePath, $message) {
-    $logFile = dirname(__DIR__) . '/uploads/git-debug.log';
-    $log = function($msg) use ($logFile) {
-        file_put_contents($logFile, date('[Y-m-d H:i:s] ') . $msg . "\n", FILE_APPEND);
-    };
-
-    $log("=== Git Auto Push Start ===");
-    $log("git_auto_push config: " . var_export($config['git_auto_push'] ?? null, true));
-
-    if (empty($config['git_auto_push']) || $config['git_auto_push'] !== true) {
-        $log("Skipped: git_auto_push is not enabled");
-        return ['success' => false, 'skipped' => true];
-    }
-
-    $repoDir = dirname(__DIR__);
-    $log("Repo dir: " . $repoDir);
-    $log("File path: " . $filePath);
-    $log("Current user: " . exec('whoami'));
-
-    $output = [];
-    $returnCode = 0;
-
-    // GitHub認証情報（Personal Access Token使用）
-    $gitToken = env('GIT_TOKEN', '');
-    $gitRepo = env('GIT_REPO', 'seta-hayashi-lab/seta-profs-memorial-site');
-
-    $pushCmd = "cd " . escapeshellarg($repoDir) . " && git push";
-    if (!empty($gitToken)) {
-        $pushCmd = "cd " . escapeshellarg($repoDir) . " && git push https://" . $gitToken . "@github.com/" . $gitRepo . ".git main 2>&1";
-    }
-
-    $commands = [
-        "cd " . escapeshellarg($repoDir) . " && git status",
-        "cd " . escapeshellarg($repoDir) . " && git add " . escapeshellarg($filePath),
-        "cd " . escapeshellarg($repoDir) . " && git add uploads/gallery.json",
-        "cd " . escapeshellarg($repoDir) . " && git commit -m " . escapeshellarg($message),
-        $pushCmd
-    ];
-
-    foreach ($commands as $cmd) {
-        // トークンをログに出力しない
-        $logCmd = preg_replace('/https:\/\/[^@]+@/', 'https://***@', $cmd);
-        $log("Executing: " . $logCmd);
-        $cmdOutput = [];
-        exec($cmd . " 2>&1", $cmdOutput, $returnCode);
-        $log("Return code: " . $returnCode);
-        $log("Output: " . implode("\n", $cmdOutput));
-        $output = array_merge($output, $cmdOutput);
-
-        if ($returnCode !== 0 && strpos($cmd, 'git push') !== false) {
-            $log("ERROR: Push failed");
-            return [
-                'success' => false,
-                'error' => implode("\n", $output),
-                'code' => $returnCode
-            ];
-        }
-    }
-
-    $log("=== Git Auto Push Complete ===");
-    return ['success' => true, 'output' => implode("\n", $output)];
-}
-
 // アクションを取得
 $action = $_GET['action'] ?? $_POST['action'] ?? 'list';
 
@@ -254,17 +188,10 @@ try {
             array_unshift($messages, $newMessage);
             saveMessages($dataFile, $messages);
 
-            $commitMsg = 'add: 追悼メッセージを追加';
-            if (!empty($uploadedMedia)) {
-                $commitMsg .= '（メディア' . count($uploadedMedia) . '件）';
-            }
-            $gitResult = gitCommitAndPush($config, 'uploads/gallery.json', $commitMsg);
-
             echo json_encode([
                 'success' => true,
                 'message' => 'メッセージを追加しました',
-                'item' => $newMessage,
-                'git' => $gitResult
+                'item' => $newMessage
             ]);
             break;
 
@@ -306,12 +233,10 @@ try {
             }
 
             saveMessages($dataFile, $messages);
-            $gitResult = gitCommitAndPush($config, 'uploads/gallery.json', 'update: 追悼メッセージを編集');
 
             echo json_encode([
                 'success' => true,
-                'message' => '更新しました',
-                'git' => $gitResult
+                'message' => '更新しました'
             ]);
             break;
 
@@ -355,12 +280,10 @@ try {
             }
 
             saveMessages($dataFile, $messages);
-            $gitResult = gitCommitAndPush($config, 'uploads/gallery.json', 'remove: 追悼メッセージを削除');
 
             echo json_encode([
                 'success' => true,
-                'message' => '削除しました',
-                'git' => $gitResult
+                'message' => '削除しました'
             ]);
             break;
 

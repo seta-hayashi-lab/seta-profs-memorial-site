@@ -1,5 +1,10 @@
-# このディレクトリ内のファイルはすべてGit管理する
-# （gallery.json, アップロードされた写真・動画など）
+# アップロードされたファイルはGit管理対象外
+*
 
-# macOSのシステムファイルのみ除外
-.DS_Store
+# ディレクトリ構造のみ保持
+!.gitignore
+!gallery/
+!gallery/photos/
+!gallery/videos/
+!gallery/photos/.gitkeep
+!gallery/videos/.gitkeep

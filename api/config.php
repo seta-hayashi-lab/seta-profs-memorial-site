@@ -97,7 +97,4 @@ return [
         'user_password' => env('USER_PASSWORD', ''),
         'session_lifetime' => (int) env('SESSION_LIFETIME', 86400),  // 24時間
     ],
-
-    // Git自動プッシュ設定
-    'git_auto_push' => env('GIT_AUTO_PUSH', 'false') === 'true',
 ];
