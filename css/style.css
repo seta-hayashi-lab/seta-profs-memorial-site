@@ -2082,15 +2082,15 @@ ul {
         border-bottom: none;
     }
 
-    /* 追悼の辞と先生のお言葉の順番を入れ替え */
-    .nav-list li:nth-child(1) {
-        order: 2;
-    }
-    .nav-list li:nth-child(2) {
-        order: 1;
-    }
+    /* スマホ版メニュー順序：学問へのご貢献・追悼の辞・先生のお言葉・メッセージを送る・追悼メッセージ一覧・お問い合わせ */
+    .nav-list li:nth-child(1) { order: 2; } /* 追悼の辞 */
+    .nav-list li:nth-child(2) { order: 1; } /* 学問へのご貢献 */
+    .nav-list li:nth-child(3) { order: 3; } /* 先生のお言葉 */
+    .nav-list li:nth-child(4) { order: 5; } /* 追悼メッセージ一覧 */
+    .nav-list li:nth-child(5) { order: 4; } /* メッセージを送る */
+    .nav-list li:nth-child(6) { order: 6; } /* お問い合わせ */
 
-    /* 各行の右2つに縦の区切り線 */
+    /* 各行の左2つに縦の区切り線（視覚的な1,2,4,5番目の右側） */
     .nav-list li:nth-child(1),
     .nav-list li:nth-child(2),
     .nav-list li:nth-child(4),
@@ -2098,7 +2098,7 @@ ul {
         border-right: 1px solid var(--border-subtle);
     }
 
-    /* 2行目・3行目の上に横の区切り線 */
+    /* 2行目の上に横の区切り線（視覚的な4,5,6番目の上側） */
     .nav-list li:nth-child(4),
     .nav-list li:nth-child(5),
     .nav-list li:nth-child(6) {

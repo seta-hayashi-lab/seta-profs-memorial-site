@@ -28,10 +28,11 @@
 
         // ナビゲーションを生成（activePage: 現在のページ識別子）
         navigation: function(activePage) {
+            // PC版の順序
             var navItems = [
                 { href: 'index.html', label: '追悼の辞', id: 'index' },
-                { href: 'words.html', label: '先生のお言葉', id: 'words' },
                 { href: 'research.html', label: '学問へのご貢献', id: 'research' },
+                { href: 'words.html', label: '先生のお言葉', id: 'words' },
                 { href: 'gallery.php', label: '追悼メッセージ一覧', id: 'gallery', requiresLogin: true },
                 { href: 'messages.php', label: 'メッセージを送る', id: 'messages' },
                 { href: 'inquiry.html', label: 'お問い合わせ', id: 'inquiry' }
