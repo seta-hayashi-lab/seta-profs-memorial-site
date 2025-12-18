@@ -2082,6 +2082,14 @@ ul {
         border-bottom: none;
     }
 
+    /* 追悼の辞と先生のお言葉の順番を入れ替え */
+    .nav-list li:nth-child(1) {
+        order: 2;
+    }
+    .nav-list li:nth-child(2) {
+        order: 1;
+    }
+
     /* 各行の右2つに縦の区切り線 */
     .nav-list li:nth-child(1),
     .nav-list li:nth-child(2),
@@ -2476,6 +2484,43 @@ ul {
     background-color: var(--color-gold);
 }
 
+/* 研究成果目次 */
+.contribution-toc {
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+}
+
+.contribution-toc ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-md);
+}
+
+.contribution-toc li {
+    position: relative;
+}
+
+.contribution-toc li:not(:last-child)::after {
+    content: '｜';
+    position: absolute;
+    right: calc(-0.5 * var(--spacing-md) - 0.3em);
+    color: var(--text-dim);
+}
+
+.contribution-toc a {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+}
+
+.contribution-toc a:hover {
+    color: var(--color-gold-light);
+}
+
 .contribution-content h3 {
     font-family: var(--font-serif);
     font-size: 1rem;
@@ -2532,14 +2577,15 @@ ul {
     margin: 0;
 }
 
-.featured-paper {
+.featured-contribution {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xs) var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
     position: relative;
 }
 
-.featured-paper::before {
+.featured-contribution::before {
     content: '';
     position: absolute;
     top: 0;
@@ -2549,13 +2595,25 @@ ul {
     background: linear-gradient(180deg, var(--color-gold), transparent);
 }
 
-.featured-paper h3,
-.featured-paper h4 {
-    font-family: var(--font-serif);
-    font-size: 1rem;
+.academic-contribution .contribution-title {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
     color: var(--text-primary);
     margin-bottom: var(--spacing-md);
     letter-spacing: 0.05em;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.academic-contribution .contribution-title::after {
+    display: none;
+}
+
+.contribution-name {
+    font-size: 1.28em;
+    font-weight: bold;
+    background: linear-gradient(transparent 75%, rgba(255, 255, 255, 0.2) 75%);
+    padding: 0 0.1em;
 }
 
 .paper-meta {
@@ -2565,11 +2623,83 @@ ul {
     line-height: 1.8;
 }
 
-.paper-description {
+.contribution-description {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 1.8;
-    margin-bottom: var(--spacing-sm);
+    line-height: 1.45;
+    margin-bottom: var(--spacing-md);
+}
+
+.contribution-description br {
+    display: block;
+    content: "";
+    margin-top: 0.4em;
+}
+
+.paper-reference {
+    margin-top: var(--spacing-xs);
+    padding-top: var(--spacing-xs);
+    border-top: 1px solid var(--border-color);
+}
+
+.reference-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--spacing-xs);
+}
+
+.paper-reference .paper-meta {
+    margin-bottom: 0;
+}
+
+.paper-list {
+    margin: 0;
+    margin-left: 1em;
+    padding-left: 0.5em;
+    list-style-type: disc;
+}
+
+.paper-list li {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-bottom: var(--spacing-xs);
+    padding-left: 0;
+}
+
+.paper-list li:last-child {
+    margin-bottom: 0;
+}
+
+.paper-list li.paper-hidden {
+    display: none;
+}
+
+.paper-list .author-seta {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.paper-toggle-btn {
+    display: inline-block;
+    margin-top: var(--spacing-xs);
+    padding: 0.3em 0.8em;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.paper-toggle-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--color-gold);
+    background-color: rgba(184, 168, 120, 0.1);
 }
 
 .paper-keywords {
@@ -2660,7 +2790,9 @@ ul {
     }
 
     .research-keywords {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xs);
     }
 
     .research-keywords li {

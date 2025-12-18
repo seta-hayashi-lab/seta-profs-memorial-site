@@ -554,6 +554,52 @@
     }
 
     // =====================================================
+    // 論文リストのトグル機能
+    // =====================================================
+    function initPaperListToggle() {
+        var paperLists = document.querySelectorAll('.paper-list');
+        var VISIBLE_COUNT = 2; // 初期表示件数
+
+        paperLists.forEach(function(list) {
+            var items = list.querySelectorAll('li');
+            if (items.length <= VISIBLE_COUNT) return; // 3報未満はスキップ
+
+            // 3番目以降を非表示にする
+            items.forEach(function(item, index) {
+                if (index >= VISIBLE_COUNT) {
+                    item.classList.add('paper-hidden');
+                }
+            });
+
+            // トグルボタンを作成
+            var toggleBtn = document.createElement('button');
+            toggleBtn.className = 'paper-toggle-btn';
+            toggleBtn.innerHTML = '他 ' + (items.length - VISIBLE_COUNT) + ' 件を表示';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+
+            var isExpanded = false;
+
+            toggleBtn.addEventListener('click', function() {
+                isExpanded = !isExpanded;
+                items.forEach(function(item, index) {
+                    if (index >= VISIBLE_COUNT) {
+                        if (isExpanded) {
+                            item.classList.remove('paper-hidden');
+                        } else {
+                            item.classList.add('paper-hidden');
+                        }
+                    }
+                });
+                toggleBtn.innerHTML = isExpanded ? '閉じる' : '他 ' + (items.length - VISIBLE_COUNT) + ' 件を表示';
+                toggleBtn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+            });
+
+            // リストの後にボタンを挿入
+            list.parentNode.insertBefore(toggleBtn, list.nextSibling);
+        });
+    }
+
+    // =====================================================
     // 初期化
     // =====================================================
     function init() {
@@ -566,6 +612,7 @@
         initGallery();
         initMessageForm();
         initPortrait();
+        initPaperListToggle();
 
         console.log('瀬田和久先生追悼サイトを読み込みました．');
         console.log('管理者機能: memorialAdmin オブジェクトをご利用ください．');
