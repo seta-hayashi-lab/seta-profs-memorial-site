@@ -585,7 +585,7 @@ ul {
 .word-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
     margin-bottom: var(--spacing-lg);
     position: relative;
 }
@@ -601,12 +601,13 @@ ul {
 }
 
 .word-content {
-    font-family: var(--font-serif);
+    font-family: var(--font-base);
     font-size: 1rem;
+    font-weight: bold;
     color: var(--text-secondary);
     line-height: 1.8;
     margin: 0;
-    padding-left: var(--spacing-md);
+    padding: var(--spacing-xs);
 }
 
 .word-content p {
@@ -623,6 +624,19 @@ ul {
     color: var(--text-muted);
     margin-top: var(--spacing-md);
     padding-left: var(--spacing-md);
+}
+
+.word-explanation {
+    margin-top: var(--spacing-xs);
+    padding-top: var(--spacing-xs);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+}
+
+.word-explanation p {
+    margin: 0;
 }
 
 /* =====================================================
@@ -2082,10 +2096,10 @@ ul {
         border-bottom: none;
     }
 
-    /* スマホ版メニュー順序：学問へのご貢献・追悼の辞・先生のお言葉・メッセージを送る・追悼メッセージ一覧・お問い合わせ */
+    /* スマホ版メニュー順序：先生のお言葉・追悼の辞・学問へのご貢献・メッセージを送る・追悼メッセージ一覧・お問い合わせ */
     .nav-list li:nth-child(1) { order: 2; } /* 追悼の辞 */
-    .nav-list li:nth-child(2) { order: 1; } /* 学問へのご貢献 */
-    .nav-list li:nth-child(3) { order: 3; } /* 先生のお言葉 */
+    .nav-list li:nth-child(2) { order: 3; } /* 学問へのご貢献 */
+    .nav-list li:nth-child(3) { order: 1; } /* 先生のお言葉 */
     .nav-list li:nth-child(4) { order: 5; } /* 追悼メッセージ一覧 */
     .nav-list li:nth-child(5) { order: 4; } /* メッセージを送る */
     .nav-list li:nth-child(6) { order: 6; } /* お問い合わせ */
