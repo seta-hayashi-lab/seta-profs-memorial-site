@@ -2510,38 +2510,33 @@ ul {
 /* 研究成果目次 */
 .contribution-toc {
     margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-md);
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
 }
 
 .contribution-toc ul {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-xs) var(--spacing-md);
+    gap: var(--spacing-xs);
 }
 
 .contribution-toc li {
-    position: relative;
-}
-
-.contribution-toc li:not(:last-child)::after {
-    content: '｜';
-    position: absolute;
-    right: calc(-0.5 * var(--spacing-md) - 0.3em);
-    color: var(--text-dim);
 }
 
 .contribution-toc a {
+    display: inline-block;
     font-family: var(--font-sans);
     font-size: 0.85rem;
     color: var(--text-secondary);
-    transition: color var(--transition-fast);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    transition: all var(--transition-fast);
 }
 
 .contribution-toc a:hover {
     color: var(--color-gold-light);
+    border-color: var(--color-gold);
+    background-color: var(--bg-medium);
 }
 
 .contribution-content h3 {
