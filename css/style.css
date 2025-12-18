@@ -1982,6 +1982,21 @@ ul {
     color: var(--text-dim);
 }
 
+.footer-admin {
+    margin-top: var(--spacing-xs);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    opacity: 0.8;
+}
+
+.footer-admin a {
+    color: var(--text-dim);
+}
+
+.footer-admin a:hover {
+    color: var(--color-gold-light);
+}
+
 /* =====================================================
    ライトボックス
    ===================================================== */

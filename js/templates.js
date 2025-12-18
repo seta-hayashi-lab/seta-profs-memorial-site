@@ -62,6 +62,7 @@
                 '<div class="container">' +
                 '<div class="footer-bottom">' +
                 '<p>&copy; 2025 瀬田・林・油谷研究室 | <a href="https://kshci-lab.net/" target="_blank" rel="noopener">研究室HP</a></p>' +
+                '<p class="footer-admin">主たる管理者: 油谷知岐 (<a href="mailto:aburatani.tomoki@omu.ac.jp">aburatani.tomoki@omu.ac.jp</a>)</p>' +
                 '</div>' +
                 '</div>' +
                 '</footer>';
