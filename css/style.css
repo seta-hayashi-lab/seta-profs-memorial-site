@@ -372,6 +372,15 @@ ul {
     border-bottom: 1px solid var(--border-subtle);
 }
 
+.memorial-intro .page-title {
+    text-align: center;
+}
+
+.memorial-intro .page-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .intro-text {
     max-width: var(--container-narrow);
     margin: 0 auto;
