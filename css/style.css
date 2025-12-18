@@ -580,7 +580,7 @@ ul {
 .words-intro {
     max-width: var(--container-narrow);
     margin: 0 auto var(--spacing-xl);
-    text-align: center;
+    text-align: left;
     color: var(--text-secondary);
     line-height: 1.8;
     font-size: 0.95rem;
