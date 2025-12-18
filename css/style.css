@@ -1740,7 +1740,7 @@ ul {
 }
 
 .messages-intro {
-    text-align: center;
+    text-align: left;
     margin-bottom: var(--spacing-xl);
     color: var(--text-secondary);
     line-height: 1.8;
@@ -3534,7 +3534,7 @@ ul {
 }
 
 .inquiry-intro {
-    text-align: center;
+    text-align: left;
     margin-bottom: var(--spacing-xl);
     color: var(--text-secondary);
     line-height: 1.8;
