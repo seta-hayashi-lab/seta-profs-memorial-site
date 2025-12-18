@@ -75,7 +75,7 @@ $userType = getUserType();
                 if (!empty($photoFiles)):
                 ?>
                 <div class="photo-gallery-section">
-                    <h2 class="photo-gallery-title">お写真・動画</h2>
+                    <h2 class="photo-gallery-title">写真・動画 from 研究室</h2>
                     <div class="photo-gallery-grid">
                         <?php foreach ($photoFiles as $file):
                             $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
@@ -164,12 +164,16 @@ $userType = getUserType();
     </div>
     <?php endif; ?>
 
-    <!-- 画像拡大モーダル -->
+    <!-- 画像・動画拡大モーダル -->
     <div id="imageLightbox" class="lightbox">
         <button type="button" class="lightbox-close" aria-label="閉じる">&times;</button>
+        <button type="button" class="lightbox-prev" aria-label="前へ">&#10094;</button>
+        <button type="button" class="lightbox-next" aria-label="次へ">&#10095;</button>
         <div class="lightbox-content">
             <img id="lightboxImage" src="" alt="拡大画像">
+            <video id="lightboxVideo" src="" controls style="display: none;"></video>
         </div>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
     </div>
 
     <!-- フッター（テンプレートから生成） -->
@@ -329,40 +333,159 @@ $userType = getUserType();
             });
         }
 
-        // ライトボックス制御
+        // ライトボックス制御（スライドナビゲーション対応）
         var lightbox = document.getElementById('imageLightbox');
         var lightboxImage = document.getElementById('lightboxImage');
+        var lightboxVideo = document.getElementById('lightboxVideo');
         var lightboxClose = document.querySelector('.lightbox-close');
+        var lightboxPrev = document.querySelector('.lightbox-prev');
+        var lightboxNext = document.querySelector('.lightbox-next');
+        var lightboxCounter = document.getElementById('lightboxCounter');
 
-        function openLightbox(src) {
-            lightboxImage.src = src;
+        // ギャラリーアイテムの配列と現在のインデックス
+        var galleryItems = [];
+        var currentIndex = 0;
+
+        // ギャラリーアイテムを収集
+        function collectGalleryItems() {
+            galleryItems = [];
+            // 研究室の写真・動画を収集
+            document.querySelectorAll('.photo-gallery-item').forEach(function(item) {
+                if (item.classList.contains('photo-gallery-video')) {
+                    var video = item.querySelector('video');
+                    if (video) {
+                        galleryItems.push({ type: 'video', src: video.src });
+                    }
+                } else if (item.classList.contains('photo-gallery-photo')) {
+                    var img = item.querySelector('img');
+                    if (img) {
+                        galleryItems.push({ type: 'image', src: item.dataset.src || img.src });
+                    }
+                }
+            });
+        }
+
+        function showItem(index) {
+            if (galleryItems.length === 0) return;
+
+            // インデックスをラップ
+            if (index < 0) index = galleryItems.length - 1;
+            if (index >= galleryItems.length) index = 0;
+            currentIndex = index;
+
+            var item = galleryItems[currentIndex];
+
+            // 動画を停止
+            lightboxVideo.pause();
+            lightboxVideo.src = '';
+
+            if (item.type === 'video') {
+                lightboxImage.style.display = 'none';
+                lightboxVideo.style.display = 'block';
+                lightboxVideo.src = item.src;
+            } else {
+                lightboxVideo.style.display = 'none';
+                lightboxImage.style.display = 'block';
+                lightboxImage.src = item.src;
+            }
+
+            // カウンター更新
+            lightboxCounter.textContent = (currentIndex + 1) + ' / ' + galleryItems.length;
+        }
+
+        function openLightbox(src, type) {
+            collectGalleryItems();
+
+            // クリックしたアイテムのインデックスを探す
+            currentIndex = 0;
+            for (var i = 0; i < galleryItems.length; i++) {
+                if (galleryItems[i].src === src) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
             lightbox.classList.add('active');
             document.body.style.overflow = 'hidden';
+            showItem(currentIndex);
         }
 
         function closeLightbox() {
             lightbox.classList.remove('active');
             lightboxImage.src = '';
+            lightboxVideo.pause();
+            lightboxVideo.src = '';
+            lightboxVideo.style.display = 'none';
+            lightboxImage.style.display = 'block';
             document.body.style.overflow = '';
+        }
+
+        function showPrev() {
+            showItem(currentIndex - 1);
+        }
+
+        function showNext() {
+            showItem(currentIndex + 1);
         }
 
         if (lightboxClose) {
             lightboxClose.addEventListener('click', closeLightbox);
         }
 
+        if (lightboxPrev) {
+            lightboxPrev.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showPrev();
+            });
+        }
+
+        if (lightboxNext) {
+            lightboxNext.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showNext();
+            });
+        }
+
         if (lightbox) {
             lightbox.addEventListener('click', function(e) {
-                if (e.target === lightbox) {
+                if (e.target === lightbox || e.target.classList.contains('lightbox-content')) {
                     closeLightbox();
                 }
             });
         }
 
+        // キーボードナビゲーション
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            if (!lightbox.classList.contains('active')) return;
+
+            if (e.key === 'Escape') {
                 closeLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                showPrev();
+            } else if (e.key === 'ArrowRight') {
+                showNext();
             }
         });
+
+        // タッチスワイプ対応
+        var touchStartX = 0;
+        var touchEndX = 0;
+
+        lightbox.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        lightbox.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            var diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    showNext(); // 左スワイプで次へ
+                } else {
+                    showPrev(); // 右スワイプで前へ
+                }
+            }
+        }, { passive: true });
 
         // メッセージを削除
         function deleteMessage(id) {
@@ -394,12 +517,32 @@ $userType = getUserType();
         // ギャラリーデータを読み込み
         loadGalleryData();
 
-        // 写真ギャラリーのクリックイベント
+        // 写真・動画ギャラリーのクリックイベント
         document.querySelectorAll('.photo-gallery-photo').forEach(function(item) {
             item.addEventListener('click', function() {
                 var src = item.dataset.src || item.querySelector('img').src;
                 openLightbox(src);
             });
+        });
+
+        document.querySelectorAll('.photo-gallery-video').forEach(function(item) {
+            var video = item.querySelector('video');
+            if (video) {
+                // 動画アイテムにオーバーレイを追加（クリックでライトボックスを開く）
+                var overlay = document.createElement('div');
+                overlay.className = 'video-overlay';
+                overlay.innerHTML = '<span class="play-icon">▶</span>';
+                item.appendChild(overlay);
+
+                overlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openLightbox(video.src);
+                });
+
+                // controls属性を削除してグリッド内では再生させない
+                video.removeAttribute('controls');
+            }
         });
 
         // 「すべてのメッセージの全文を開く」ボタン
