@@ -1251,6 +1251,68 @@ ul {
     gap: var(--spacing-sm);
 }
 
+/* カテゴリヘッダー */
+.category-header {
+    grid-column: 1 / -1;
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-xs);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.category-header:first-child {
+    margin-top: 0;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+}
+
+.category-title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--color-gold);
+    margin: 0;
+    letter-spacing: 0.05em;
+}
+
+.category-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.75rem;
+    background-color: var(--bg-lighter);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-add-btn:hover {
+    background-color: var(--color-gold);
+    color: var(--bg-darkest);
+    border-color: var(--color-gold);
+}
+
+.category-add-btn .add-icon {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.no-messages-in-category {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    padding: var(--spacing-md);
+    font-style: italic;
+}
+
 .no-messages,
 .no-media {
     text-align: center;
@@ -1537,6 +1599,17 @@ ul {
     font-size: 0.75rem;
     color: var(--text-muted);
     margin-bottom: var(--spacing-md);
+}
+
+/* フォームエラーメッセージ */
+.form-error-message {
+    font-size: 0.8rem;
+    color: #e57373;
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: rgba(229, 115, 115, 0.1);
+    border: 1px solid rgba(229, 115, 115, 0.3);
+    border-radius: 4px;
 }
 
 /* プレビューグリッド */

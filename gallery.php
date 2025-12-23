@@ -41,11 +41,6 @@ $userType = getUserType();
                 <div class="messages-section">
                     <div class="messages-controls">
                         <button type="button" class="expand-all-btn" id="expandAllBtn">すべてのメッセージの全文を開く</button>
-                        <?php if ($isAdmin): ?>
-                        <button type="button" class="admin-add-message-btn" id="addMessageBtn">
-                            <span class="add-icon">+</span> メッセージを追加
-                        </button>
-                        <?php endif; ?>
                     </div>
                     <div class="messages-list" id="messagesList">
                         <!-- メッセージはJavaScriptで動的に生成 -->
@@ -113,7 +108,7 @@ $userType = getUserType();
                 <input type="hidden" id="messageId" name="id" value="">
 
                 <div class="form-group">
-                    <label for="msgAuthor">お名前</label>
+                    <label for="msgAuthor">お名前 <span class="required">*</span></label>
                     <input type="text" id="msgAuthor" name="author" placeholder="例：山田 太郎">
                 </div>
 
@@ -125,6 +120,16 @@ $userType = getUserType();
                 <div class="form-group">
                     <label for="msgRelationship">瀬田先生との関係</label>
                     <input type="text" id="msgRelationship" name="relationship" placeholder="例：元学生，共同研究者 など">
+                </div>
+
+                <div class="form-group">
+                    <label for="msgCategory">カテゴリ <span class="required">*</span></label>
+                    <select id="msgCategory" name="category">
+                        <option value="">選択してください</option>
+                        <option value="disciple">弟子（研究者）</option>
+                        <option value="obog">OBOG</option>
+                        <option value="related">関係者</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -146,6 +151,8 @@ $userType = getUserType();
                 </div>
 
                 <p class="form-note">※ メッセージのみ，写真・動画のみ，または両方を追加できます</p>
+
+                <div id="msgFormError" class="form-error-message" style="display: none;"></div>
 
                 <div class="form-actions">
                     <button type="button" class="cancel-btn" id="cancelMessage">キャンセル</button>
@@ -231,6 +238,13 @@ $userType = getUserType();
             });
         }
 
+        // カテゴリ定義
+        var categories = [
+            { key: 'disciple', label: '弟子（研究者）' },
+            { key: 'obog', label: 'OBOG' },
+            { key: 'related', label: '関係者' }
+        ];
+
         // メッセージを表示
         function renderMessages(messages) {
             var list = document.getElementById('messagesList');
@@ -241,7 +255,78 @@ $userType = getUserType();
                 return;
             }
 
+            // カテゴリ別にメッセージを分類
+            var categorizedMessages = {
+                disciple: [],
+                obog: [],
+                related: [],
+                uncategorized: []
+            };
+
             messages.forEach(function(msg) {
+                var cat = msg.category || '';
+                if (categorizedMessages[cat]) {
+                    categorizedMessages[cat].push(msg);
+                } else {
+                    categorizedMessages.uncategorized.push(msg);
+                }
+            });
+
+            // カテゴリ順に表示（管理者は空のカテゴリも表示）
+            categories.forEach(function(category) {
+                var categoryMessages = categorizedMessages[category.key];
+
+                // 管理者でない場合、空のカテゴリはスキップ
+                if (!isAdmin && categoryMessages.length === 0) return;
+
+                // カテゴリヘッダー
+                var categoryHeader = document.createElement('div');
+                categoryHeader.className = 'category-header';
+
+                var headerHtml = '<h2 class="category-title">' + category.label + '</h2>';
+                if (isAdmin) {
+                    headerHtml += '<button type="button" class="category-add-btn" data-category="' + category.key + '">' +
+                                  '<span class="add-icon">+</span> 追加</button>';
+                }
+                categoryHeader.innerHTML = headerHtml;
+                list.appendChild(categoryHeader);
+
+                // 管理者用の追加ボタンにイベントリスナーを設定
+                if (isAdmin) {
+                    var addBtn = categoryHeader.querySelector('.category-add-btn');
+                    addBtn.addEventListener('click', function() {
+                        openMessageModal(null, category.key);
+                    });
+                }
+
+                // カテゴリ内のメッセージを表示
+                if (categoryMessages.length === 0) {
+                    var noMsg = document.createElement('p');
+                    noMsg.className = 'no-messages-in-category';
+                    noMsg.textContent = 'このカテゴリにはまだメッセージがありません';
+                    list.appendChild(noMsg);
+                } else {
+                    categoryMessages.forEach(function(msg) {
+                        renderMessageCard(msg, list);
+                    });
+                }
+            });
+
+            // 未分類のメッセージがある場合（既存データの互換性）
+            if (categorizedMessages.uncategorized.length > 0) {
+                var categoryHeader = document.createElement('div');
+                categoryHeader.className = 'category-header';
+                categoryHeader.innerHTML = '<h2 class="category-title">その他</h2>';
+                list.appendChild(categoryHeader);
+
+                categorizedMessages.uncategorized.forEach(function(msg) {
+                    renderMessageCard(msg, list);
+                });
+            }
+        }
+
+        // 個別のメッセージカードをレンダリング
+        function renderMessageCard(msg, list) {
                 var card = document.createElement('div');
                 card.className = 'message-card';
                 card.dataset.id = msg.id;
@@ -338,7 +423,6 @@ $userType = getUserType();
                         }
                     });
                 }
-            });
         }
 
         // ライトボックス制御（スライドナビゲーション対応）
@@ -602,14 +686,6 @@ $userType = getUserType();
             var msgPreviewGroup = document.getElementById('msgPreviewGroup');
             var msgPreviewDiv = document.getElementById('msgPreview');
 
-            // メッセージ追加ボタン
-            var addMsgBtn = document.getElementById('addMessageBtn');
-            if (addMsgBtn) {
-                addMsgBtn.addEventListener('click', function() {
-                    openMessageModal(null);
-                });
-            }
-
             // モーダルを閉じる
             document.getElementById('closeMessageModal').addEventListener('click', closeMsgModal);
             document.getElementById('cancelMessage').addEventListener('click', closeMsgModal);
@@ -624,6 +700,12 @@ $userType = getUserType();
                 msgFilesText.textContent = 'ファイルを選択してください';
                 msgPreviewGroup.style.display = 'none';
                 msgPreviewDiv.innerHTML = '';
+                // エラーメッセージをクリア
+                var errorDiv = document.getElementById('msgFormError');
+                if (errorDiv) {
+                    errorDiv.style.display = 'none';
+                    errorDiv.innerHTML = '';
+                }
             }
 
             // ファイル選択時のプレビュー
@@ -670,7 +752,9 @@ $userType = getUserType();
             });
 
             // メッセージモーダルを開く（新規 or 編集）
-            window.openMessageModal = function(msg) {
+            // msg: 編集時はメッセージオブジェクト、新規時はnull
+            // defaultCategory: 新規追加時のカテゴリ初期値（オプション）
+            window.openMessageModal = function(msg, defaultCategory) {
                 closeMsgModal(); // まずリセット
                 if (msg) {
                     // 編集モード
@@ -680,18 +764,56 @@ $userType = getUserType();
                     document.getElementById('msgAuthor').value = msg.author || '';
                     document.getElementById('msgAffiliation').value = msg.affiliation || '';
                     document.getElementById('msgRelationship').value = msg.relationship || '';
+                    document.getElementById('msgCategory').value = msg.category || '';
                     document.getElementById('msgContent').value = msg.content || '';
                 } else {
                     // 新規モード
                     msgModalTitle.textContent = '追悼メッセージを追加';
                     msgSubmitBtn.textContent = '追加する';
+                    // カテゴリの初期値を設定
+                    if (defaultCategory) {
+                        document.getElementById('msgCategory').value = defaultCategory;
+                    }
                 }
                 msgModal.classList.add('active');
             };
 
+            // エラーメッセージ要素
+            var msgFormError = document.getElementById('msgFormError');
+
+            // エラーメッセージを表示
+            function showFormError(messages) {
+                msgFormError.innerHTML = messages.join('<br>');
+                msgFormError.style.display = 'block';
+            }
+
+            // エラーメッセージを非表示
+            function hideFormError() {
+                msgFormError.innerHTML = '';
+                msgFormError.style.display = 'none';
+            }
+
             // メッセージ送信
             msgForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+                hideFormError();
+
+                // バリデーション
+                var authorValue = document.getElementById('msgAuthor').value.trim();
+                var categoryValue = document.getElementById('msgCategory').value;
+                var errors = [];
+
+                if (!authorValue) {
+                    errors.push('お名前を入力してください');
+                }
+                if (!categoryValue) {
+                    errors.push('カテゴリを選択してください');
+                }
+
+                if (errors.length > 0) {
+                    showFormError(errors);
+                    return;
+                }
 
                 var msgId = document.getElementById('messageId').value;
                 var action = msgId ? 'update_message' : 'add_message';
@@ -701,9 +823,10 @@ $userType = getUserType();
                 var formData = new FormData();
                 formData.append('action', action);
                 if (msgId) formData.append('id', msgId);
-                formData.append('author', document.getElementById('msgAuthor').value);
+                formData.append('author', authorValue);
                 formData.append('affiliation', document.getElementById('msgAffiliation').value);
                 formData.append('relationship', document.getElementById('msgRelationship').value);
+                formData.append('category', categoryValue);
                 formData.append('content', document.getElementById('msgContent').value);
 
                 // ファイルを追加（複数対応）

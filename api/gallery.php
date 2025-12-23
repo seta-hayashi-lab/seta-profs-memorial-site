@@ -122,6 +122,7 @@ try {
             $author = trim($_POST['author'] ?? '');
             $affiliation = trim($_POST['affiliation'] ?? '');
             $relationship = trim($_POST['relationship'] ?? '');
+            $category = trim($_POST['category'] ?? '');
             $content = trim($_POST['content'] ?? '');
 
             $hasFiles = isset($_FILES['files']) && !empty($_FILES['files']['name'][0]);
@@ -180,6 +181,7 @@ try {
                 'author' => $author,
                 'affiliation' => $affiliation,
                 'relationship' => $relationship,
+                'category' => $category,
                 'content' => $content,
                 'media' => $uploadedMedia,
                 'created_at' => date('Y-m-d H:i:s')
@@ -211,6 +213,7 @@ try {
             $author = trim($_POST['author'] ?? '');
             $affiliation = trim($_POST['affiliation'] ?? '');
             $relationship = trim($_POST['relationship'] ?? '');
+            $category = trim($_POST['category'] ?? '');
             $content = trim($_POST['content'] ?? '');
 
             $messages = loadMessages($dataFile);
@@ -221,6 +224,7 @@ try {
                     $messages[$index]['author'] = $author;
                     $messages[$index]['affiliation'] = $affiliation;
                     $messages[$index]['relationship'] = $relationship;
+                    $messages[$index]['category'] = $category;
                     $messages[$index]['content'] = $content;
                     $messages[$index]['updated_at'] = date('Y-m-d H:i:s');
                     $found = true;
