@@ -1,10 +1,17 @@
 .DS_Store
 CLAUDE.md
 
-# 環境設定ファイル（Slackトークンなど機密情報を含む）
-# .env.example を参考に .env を作成してください
+# 環境設定ファイル（Slackトークンなど機密情報を含む）
+# .env.example を参考に .env を作成してください
 .env
 
-# Basic認証パスワードファイル
-# .htpasswd.example を参考に .htpasswd を作成してください
+# Basic認証パスワードファイル
+# .htpasswd.example を参考に .htpasswd を作成してください
 .htpasswd
+
+# アップロードされたファイル（ディレクトリ構造のみ保持）
+uploads/gallery/photos/*
+!uploads/gallery/photos/.gitkeep
+uploads/gallery/videos/*
+!uploads/gallery/videos/.gitkeep
+uploads/gallery.json
