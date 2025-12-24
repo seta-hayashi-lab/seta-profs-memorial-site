@@ -1247,7 +1247,7 @@ ul {
 /* メッセージ一覧 */
 .messages-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-sm);
 }
 
@@ -2483,7 +2483,7 @@ ul {
     }
 
     .messages-list {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .container {
