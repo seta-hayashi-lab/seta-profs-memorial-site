@@ -104,7 +104,7 @@ $userType = getUserType();
             <button type="button" class="modal-close-btn" id="closeMessageModal">&times;</button>
             <h3 class="modal-title" id="messageModalTitle">追悼メッセージを追加</h3>
 
-            <form id="messageForm" class="message-form">
+            <form id="adminMessageForm" class="message-form">
                 <input type="hidden" id="messageId" name="id" value="">
 
                 <div class="form-group">
@@ -135,6 +135,7 @@ $userType = getUserType();
                 <div class="form-group">
                     <label for="msgContent">メッセージ</label>
                     <textarea id="msgContent" name="content" rows="6" placeholder="追悼メッセージを入力してください"></textarea>
+                    <p class="field-note">簡易なMarkdown記法（Hタグ・アンカー・バレットリスト）に対応しています</p>
                 </div>
 
                 <div class="form-group">
@@ -146,13 +147,21 @@ $userType = getUserType();
                 </div>
 
                 <div class="form-group" id="msgPreviewGroup" style="display: none;">
-                    <label>プレビュー</label>
+                    <label>新規アップロード</label>
                     <div id="msgPreview" class="upload-preview-grid"></div>
                 </div>
 
-                <p class="form-note">※ メッセージのみ，写真・動画のみ，または両方を追加できます</p>
+                <div class="form-group" id="existingMediaGroup" style="display: none;">
+                    <label>登録済みメディア</label>
+                    <div id="existingMediaPreview" class="upload-preview-grid"></div>
+                </div>
 
-                <div id="msgFormError" class="form-error-message" style="display: none;"></div>
+                <div class="form-group" id="deletedMediaGroup" style="display: none;">
+                    <label>削除予定（クリックで復元）</label>
+                    <div id="deletedMediaPreview" class="upload-preview-grid deleted-media"></div>
+                </div>
+
+                <p class="form-note">※ メッセージのみ，写真・動画のみ，または両方を追加できます</p>
 
                 <div class="form-actions">
                     <button type="button" class="cancel-btn" id="cancelMessage">キャンセル</button>
@@ -188,6 +197,8 @@ $userType = getUserType();
 
     <script src="js/templates.js"></script>
     <script src="js/main.js"></script>
+    <!-- Markdown parser -->
+    <script src="js/marked.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6Z2CM1DGQ"></script>
     <script>
@@ -350,10 +361,10 @@ $userType = getUserType();
                     html += '</div>';
                 }
 
-                // 2. メッセージ内容（3行以上は折りたたみ）- HTMLをそのまま表示
+                // 2. メッセージ内容（3行以上は折りたたみ）- マークダウン形式で表示
                 if (msg.content) {
                     html += '<div class="message-content-wrapper">';
-                    html += '<div class="message-content collapsed">' + msg.content + '</div>';
+                    html += '<div class="message-content collapsed">' + parseMarkdown(msg.content) + '</div>';
                     html += '<button type="button" class="message-toggle">全文を見る</button>';
                     html += '</div>';
                 }
@@ -392,12 +403,20 @@ $userType = getUserType();
 
                 list.appendChild(card);
 
-                // 画像クリックでライトボックス表示
-                card.querySelectorAll('.message-photo img').forEach(function(img) {
-                    img.addEventListener('click', function() {
-                        openLightbox(img.src);
+                // 画像クリックでライトボックス表示（そのメッセージのメディアのみ）
+                if (msg.media && msg.media.length > 0) {
+                    card.querySelectorAll('.message-photo img').forEach(function(img) {
+                        img.addEventListener('click', function() {
+                            openMessageLightbox(msg.media, img.src);
+                        });
                     });
-                });
+                    card.querySelectorAll('.message-video video').forEach(function(video) {
+                        video.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            openMessageLightbox(msg.media, video.src);
+                        });
+                    });
+                }
 
                 // メッセージ折りたたみ処理
                 var contentWrapper = card.querySelector('.message-content-wrapper');
@@ -502,6 +521,31 @@ $userType = getUserType();
             showItem(currentIndex);
         }
 
+        // メッセージ専用のライトボックスを開く
+        function openMessageLightbox(mediaArray, clickedSrc) {
+            // メッセージのメディアをgalleryItemsにセット
+            galleryItems = [];
+            mediaArray.forEach(function(media) {
+                galleryItems.push({
+                    type: media.type === 'photo' ? 'image' : 'video',
+                    src: media.url
+                });
+            });
+
+            // クリックしたアイテムのインデックスを探す
+            currentIndex = 0;
+            for (var i = 0; i < galleryItems.length; i++) {
+                if (galleryItems[i].src === clickedSrc) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            showItem(currentIndex);
+        }
+
         function closeLightbox() {
             lightbox.classList.remove('active');
             lightboxImage.src = '';
@@ -591,19 +635,28 @@ $userType = getUserType();
             .then(function(data) {
                 if (data.success) {
                     loadGalleryData();
-                } else {
-                    console.error('削除エラー:', data.error || '削除に失敗しました');
                 }
             })
-            .catch(function(error) {
-                console.error('削除エラー:', error);
-            });
+            .catch(function() {});
         }
 
         function escapeHtml(text) {
             var div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        // マークダウンパーサー（marked.js使用）
+        function parseMarkdown(text) {
+            if (!text) return '';
+
+            // marked.jsの設定
+            marked.setOptions({
+                breaks: true,  // 改行を<br>に変換
+                gfm: true      // GitHub Flavored Markdown
+            });
+
+            return marked.parse(text);
         }
 
         // ギャラリーデータを読み込み
@@ -678,13 +731,21 @@ $userType = getUserType();
 
             // === メッセージ管理機能 ===
             var msgModal = document.getElementById('messageModal');
-            var msgForm = document.getElementById('messageForm');
+            var msgForm = document.getElementById('adminMessageForm');
             var msgModalTitle = document.getElementById('messageModalTitle');
             var msgSubmitBtn = document.getElementById('submitMessage');
             var msgFilesInput = document.getElementById('msgFiles');
             var msgFilesText = document.getElementById('msgFilesText');
             var msgPreviewGroup = document.getElementById('msgPreviewGroup');
             var msgPreviewDiv = document.getElementById('msgPreview');
+            var existingMediaGroup = document.getElementById('existingMediaGroup');
+            var existingMediaPreview = document.getElementById('existingMediaPreview');
+            var deletedMediaGroup = document.getElementById('deletedMediaGroup');
+            var deletedMediaPreview = document.getElementById('deletedMediaPreview');
+
+            // メディア管理用変数
+            var currentExistingMedia = [];  // 現在の既存メディア
+            var deletedMedia = [];          // 削除予定のメディア
 
             // モーダルを閉じる
             document.getElementById('closeMessageModal').addEventListener('click', closeMsgModal);
@@ -700,12 +761,109 @@ $userType = getUserType();
                 msgFilesText.textContent = 'ファイルを選択してください';
                 msgPreviewGroup.style.display = 'none';
                 msgPreviewDiv.innerHTML = '';
-                // エラーメッセージをクリア
-                var errorDiv = document.getElementById('msgFormError');
-                if (errorDiv) {
-                    errorDiv.style.display = 'none';
-                    errorDiv.innerHTML = '';
+                existingMediaGroup.style.display = 'none';
+                existingMediaPreview.innerHTML = '';
+                deletedMediaGroup.style.display = 'none';
+                deletedMediaPreview.innerHTML = '';
+                currentExistingMedia = [];
+                deletedMedia = [];
+            }
+
+            // 既存メディアの表示を更新
+            function renderExistingMedia() {
+                existingMediaPreview.innerHTML = '';
+                if (currentExistingMedia.length === 0) {
+                    existingMediaGroup.style.display = 'none';
+                    return;
                 }
+                existingMediaGroup.style.display = 'block';
+
+                currentExistingMedia.forEach(function(media, index) {
+                    var item = document.createElement('div');
+                    item.className = 'preview-item existing-media-item';
+
+                    if (media.type === 'photo') {
+                        var img = document.createElement('img');
+                        img.className = 'preview-thumb';
+                        img.src = media.url;
+                        item.appendChild(img);
+                    } else {
+                        var video = document.createElement('video');
+                        video.className = 'preview-thumb';
+                        video.src = media.url;
+                        item.appendChild(video);
+                        var badge = document.createElement('span');
+                        badge.className = 'preview-badge';
+                        badge.textContent = '動画';
+                        item.appendChild(badge);
+                    }
+
+                    // 削除ボタン
+                    var deleteBtn = document.createElement('button');
+                    deleteBtn.type = 'button';
+                    deleteBtn.className = 'media-delete-btn';
+                    deleteBtn.innerHTML = '&times;';
+                    deleteBtn.addEventListener('click', function() {
+                        moveToDeleted(index);
+                    });
+                    item.appendChild(deleteBtn);
+
+                    existingMediaPreview.appendChild(item);
+                });
+            }
+
+            // 削除予定メディアの表示を更新
+            function renderDeletedMedia() {
+                deletedMediaPreview.innerHTML = '';
+                if (deletedMedia.length === 0) {
+                    deletedMediaGroup.style.display = 'none';
+                    return;
+                }
+                deletedMediaGroup.style.display = 'block';
+
+                deletedMedia.forEach(function(media, index) {
+                    var item = document.createElement('div');
+                    item.className = 'preview-item deleted-media-item';
+                    item.title = 'クリックで復元';
+
+                    if (media.type === 'photo') {
+                        var img = document.createElement('img');
+                        img.className = 'preview-thumb';
+                        img.src = media.url;
+                        item.appendChild(img);
+                    } else {
+                        var video = document.createElement('video');
+                        video.className = 'preview-thumb';
+                        video.src = media.url;
+                        item.appendChild(video);
+                        var badge = document.createElement('span');
+                        badge.className = 'preview-badge';
+                        badge.textContent = '動画';
+                        item.appendChild(badge);
+                    }
+
+                    item.addEventListener('click', function() {
+                        restoreFromDeleted(index);
+                    });
+
+                    deletedMediaPreview.appendChild(item);
+                });
+            }
+
+            // 既存メディアを削除予定に移動
+            function moveToDeleted(index) {
+                var media = currentExistingMedia.splice(index, 1)[0];
+                deletedMedia.push(media);
+                renderExistingMedia();
+                renderDeletedMedia();
+            }
+
+            // 削除予定から復元
+            function restoreFromDeleted(index) {
+                var media = deletedMedia.splice(index, 1)[0];
+                currentExistingMedia.push(media);
+                renderExistingMedia();
+                renderDeletedMedia();
             }
 
             // ファイル選択時のプレビュー
@@ -766,6 +924,12 @@ $userType = getUserType();
                     document.getElementById('msgRelationship').value = msg.relationship || '';
                     document.getElementById('msgCategory').value = msg.category || '';
                     document.getElementById('msgContent').value = msg.content || '';
+
+                    // 既存メディアを設定
+                    if (msg.media && msg.media.length > 0) {
+                        currentExistingMedia = msg.media.slice(); // コピー
+                        renderExistingMedia();
+                    }
                 } else {
                     // 新規モード
                     msgModalTitle.textContent = '追悼メッセージを追加';
@@ -778,40 +942,15 @@ $userType = getUserType();
                 msgModal.classList.add('active');
             };
 
-            // エラーメッセージ要素
-            var msgFormError = document.getElementById('msgFormError');
-
-            // エラーメッセージを表示
-            function showFormError(messages) {
-                msgFormError.innerHTML = messages.join('<br>');
-                msgFormError.style.display = 'block';
-            }
-
-            // エラーメッセージを非表示
-            function hideFormError() {
-                msgFormError.innerHTML = '';
-                msgFormError.style.display = 'none';
-            }
-
             // メッセージ送信
             msgForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                hideFormError();
 
-                // バリデーション
+                // バリデーション（必須項目がなければ送信しない）
                 var authorValue = document.getElementById('msgAuthor').value.trim();
                 var categoryValue = document.getElementById('msgCategory').value;
-                var errors = [];
 
-                if (!authorValue) {
-                    errors.push('お名前を入力してください');
-                }
-                if (!categoryValue) {
-                    errors.push('カテゴリを選択してください');
-                }
-
-                if (errors.length > 0) {
-                    showFormError(errors);
+                if (!authorValue || !categoryValue) {
                     return;
                 }
 
@@ -828,6 +967,11 @@ $userType = getUserType();
                 formData.append('relationship', document.getElementById('msgRelationship').value);
                 formData.append('category', categoryValue);
                 formData.append('content', document.getElementById('msgContent').value);
+
+                // 既存メディア情報を送信（更新時のみ）
+                if (msgId) {
+                    formData.append('existing_media', JSON.stringify(currentExistingMedia));
+                }
 
                 // ファイルを追加（複数対応）
                 var files = msgFilesInput.files;
@@ -846,13 +990,10 @@ $userType = getUserType();
                     if (data.success) {
                         closeMsgModal();
                         loadGalleryData();
-                    } else {
-                        console.error('保存エラー:', data.error || '保存に失敗しました');
                     }
                 })
-                .catch(function(error) {
+                .catch(function() {
                     uploadLoading.classList.remove('active');
-                    console.error('保存エラー:', error);
                 });
             });
         }

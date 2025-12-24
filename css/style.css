@@ -1341,6 +1341,67 @@ ul {
     color: var(--text-primary);
 }
 
+.message-content h3,
+.message-content h4,
+.message-content h5 {
+    margin: 0.8em 0 0.4em;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.message-content h3 {
+    font-size: 1.1em;
+}
+
+.message-content h4 {
+    font-size: 1em;
+}
+
+.message-content h5 {
+    font-size: 0.95em;
+}
+
+.message-content ul,
+.message-content ol {
+    margin: 0.5em 0;
+    padding-left: 0;
+}
+
+.message-content ul {
+    list-style: none;
+}
+
+.message-content ol {
+    list-style: none;
+    counter-reset: ol-counter;
+}
+
+.message-content li {
+    margin: 0.25em 0;
+    padding-left: 1em;
+    position: relative;
+}
+
+.message-content ul > li::before {
+    content: "●";
+    color: #fff;
+    position: absolute;
+    left: 0;
+    font-size: 0.5em;
+    top: 0.5em;
+}
+
+.message-content ol > li {
+    counter-increment: ol-counter;
+}
+
+.message-content ol > li::before {
+    content: counter(ol-counter) ".";
+    color: #fff;
+    position: absolute;
+    left: 0;
+}
+
 .message-content.collapsed {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -1641,6 +1702,60 @@ ul {
     color: var(--color-gold);
     font-size: 0.6rem;
     padding: 1px 4px;
+}
+
+/* メディア削除ボタン */
+.media-delete-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(200, 0, 0, 0.8);
+    color: #fff;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.media-delete-btn:hover {
+    background: rgba(255, 0, 0, 0.9);
+}
+
+/* 削除予定メディア */
+.deleted-media-item {
+    opacity: 0.5;
+    cursor: pointer;
+    position: relative;
+}
+
+.deleted-media-item::after {
+    content: '復元';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+}
+
+.deleted-media-item:hover {
+    opacity: 0.8;
+}
+
+.deleted-media {
+    background: rgba(100, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 4px;
 }
 
 .gallery-tabs {
@@ -3232,7 +3347,8 @@ ul {
     color: var(--text-secondary);
 }
 
-.file-note {
+.file-note,
+.field-note {
     font-size: 0.75rem;
     color: var(--text-dim);
     margin-top: var(--spacing-xs);

@@ -216,17 +216,94 @@ try {
             $category = trim($_POST['category'] ?? '');
             $content = trim($_POST['content'] ?? '');
 
+            $hasFiles = isset($_FILES['files']) && !empty($_FILES['files']['name'][0]);
             $messages = loadMessages($dataFile);
             $found = false;
+            $uploadedMedia = [];
+
+            // 新しいファイルがアップロードされた場合の処理
+            if ($hasFiles) {
+                $files = $_FILES['files'];
+                $fileCount = count($files['name']);
+
+                for ($i = 0; $i < $fileCount; $i++) {
+                    if ($files['error'][$i] !== UPLOAD_ERR_OK) {
+                        continue;
+                    }
+
+                    $tmpName = $files['tmp_name'][$i];
+                    $originalName = $files['name'][$i];
+
+                    $finfo = new finfo(FILEINFO_MIME_TYPE);
+                    $mimeType = $finfo->file($tmpName);
+
+                    $isPhoto = in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+                    $isVideo = in_array($mimeType, ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo']);
+
+                    if (!$isPhoto && !$isVideo) {
+                        continue;
+                    }
+
+                    if ($files['size'][$i] > $config['max_file_size']) {
+                        continue;
+                    }
+
+                    $newFilename = sanitizeFilename($originalName);
+                    $subDir = $isPhoto ? 'photos' : 'videos';
+                    $targetDir = $mediaDir . '/' . $subDir;
+
+                    if (!file_exists($targetDir)) {
+                        mkdir($targetDir, 0755, true);
+                    }
+
+                    $targetPath = $targetDir . '/' . $newFilename;
+
+                    if (move_uploaded_file($tmpName, $targetPath)) {
+                        $uploadedMedia[] = [
+                            'type' => $isPhoto ? 'photo' : 'video',
+                            'url' => 'uploads/gallery/' . $subDir . '/' . $newFilename,
+                            'filename' => $newFilename
+                        ];
+                    }
+                }
+            }
+
+            // 既存メディア情報を取得
+            $existingMediaJson = $_POST['existing_media'] ?? '';
+            $existingMedia = [];
+            if (!empty($existingMediaJson)) {
+                $existingMedia = json_decode($existingMediaJson, true) ?: [];
+            }
 
             foreach ($messages as $index => $msg) {
                 if ($msg['id'] === $id) {
+                    // 削除されたメディアのファイルを物理削除
+                    $originalMedia = $msg['media'] ?? [];
+                    $existingUrls = array_column($existingMedia, 'url');
+                    foreach ($originalMedia as $media) {
+                        if (!in_array($media['url'], $existingUrls)) {
+                            // このメディアは削除された
+                            $filePath = __DIR__ . '/../' . $media['url'];
+                            if (file_exists($filePath)) {
+                                unlink($filePath);
+                            }
+                        }
+                    }
+
                     $messages[$index]['author'] = $author;
                     $messages[$index]['affiliation'] = $affiliation;
                     $messages[$index]['relationship'] = $relationship;
                     $messages[$index]['category'] = $category;
                     $messages[$index]['content'] = $content;
                     $messages[$index]['updated_at'] = date('Y-m-d H:i:s');
+
+                    // メディアを更新：既存メディア（削除されなかったもの）+ 新規アップロード
+                    $newMedia = $existingMedia;
+                    if (!empty($uploadedMedia)) {
+                        $newMedia = array_merge($newMedia, $uploadedMedia);
+                    }
+                    $messages[$index]['media'] = $newMedia;
+
                     $found = true;
                     break;
                 }
