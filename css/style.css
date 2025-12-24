@@ -578,7 +578,7 @@ ul {
 }
 
 .words-intro {
-    max-width: var(--container-narrow);
+    max-width: 100%;
     margin: 0 auto var(--spacing-xl);
     text-align: left;
     color: var(--text-secondary);
@@ -587,7 +587,7 @@ ul {
 }
 
 .words-list {
-    max-width: var(--container-narrow);
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -1324,7 +1324,8 @@ ul {
 .message-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-sm);
+    margin: 0;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1332,7 +1333,6 @@ ul {
 
 .message-content-wrapper {
     flex-grow: 1;
-    margin-bottom: var(--spacing-xs);
 }
 
 .message-content {
@@ -1415,20 +1415,28 @@ ul {
     color: var(--color-gold);
     font-size: 0.75rem;
     cursor: pointer;
-    padding: 4px 0;
-    margin-top: 4px;
+    padding: 0;
+    margin: 0;
 }
 
 .message-toggle:hover {
     text-decoration: underline;
 }
 
+.message-author-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
 .message-meta {
     font-size: 0.7rem;
     color: var(--text-muted);
+    margin-top: auto;
     border-top: 1px solid var(--border-subtle);
     padding-top: var(--spacing-xs);
-    margin-top: auto;
+    text-align: right;
 }
 
 .message-actions {
@@ -1667,7 +1675,7 @@ ul {
     font-size: 0.8rem;
     color: #e57373;
     margin-bottom: var(--spacing-sm);
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-sm);
     background-color: rgba(229, 115, 115, 0.1);
     border: 1px solid rgba(229, 115, 115, 0.3);
     border-radius: 4px;
@@ -2016,9 +2024,9 @@ ul {
 
 .message-card {
     background-color: var(--bg-card);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-sm) var(--spacing-sm);
     border: 1px solid var(--border-color);
-    margin-bottom: var(--spacing-md);
+    margin: 0;
     position: relative;
     transition: all var(--transition-fast);
 }
@@ -2039,7 +2047,7 @@ ul {
 }
 
 .message-content {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 0;
 }
 
 .message-content p {
@@ -2804,7 +2812,7 @@ ul {
     font-family: var(--font-sans);
     font-size: 0.85rem;
     color: var(--text-secondary);
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-sm);
     border: 1px solid var(--border-color);
     background-color: var(--bg-card);
     transition: all var(--transition-fast);
@@ -3688,7 +3696,7 @@ ul {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-sm);
     background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
     z-index: 1;
 }

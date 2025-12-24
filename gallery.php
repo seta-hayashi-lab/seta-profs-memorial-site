@@ -344,7 +344,12 @@ $userType = getUserType();
 
                 var html = '';
 
-                // 1. メディア（写真・動画）を一番上に
+                // 1. 氏名を一番上に
+                if (msg.author) {
+                    html += '<div class="message-author-name">' + escapeHtml(msg.author) + '</div>';
+                }
+
+                // 2. メディア（写真・動画）
                 if (msg.media && msg.media.length > 0) {
                     html += '<div class="message-media">';
                     msg.media.forEach(function(media) {
@@ -361,7 +366,7 @@ $userType = getUserType();
                     html += '</div>';
                 }
 
-                // 2. メッセージ内容（3行以上は折りたたみ）- マークダウン形式で表示
+                // 3. メッセージ内容（3行以上は折りたたみ）- マークダウン形式で表示
                 if (msg.content) {
                     html += '<div class="message-content-wrapper">';
                     html += '<div class="message-content collapsed">' + parseMarkdown(msg.content) + '</div>';
@@ -369,13 +374,12 @@ $userType = getUserType();
                     html += '</div>';
                 }
 
-                // 3. メタ情報（名前・所属・関係）を一番下に
-                var metaParts = [];
-                if (msg.author) metaParts.push(escapeHtml(msg.author));
-                if (msg.affiliation) metaParts.push(escapeHtml(msg.affiliation));
-                if (msg.relationship) metaParts.push(escapeHtml(msg.relationship));
-                if (metaParts.length > 0) {
-                    html += '<div class="message-meta">' + metaParts.join(' / ') + '</div>';
+                // 4. 所属・関係を一番下に
+                var subParts = [];
+                if (msg.affiliation) subParts.push(escapeHtml(msg.affiliation));
+                if (msg.relationship) subParts.push(escapeHtml(msg.relationship));
+                if (subParts.length > 0) {
+                    html += '<div class="message-meta">' + subParts.join(' / ') + '</div>';
                 }
 
                 card.innerHTML = html;
